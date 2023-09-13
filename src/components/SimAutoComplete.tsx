@@ -45,7 +45,7 @@ const SimAutoComplete = ({
 
   return (
     <Wrapper ref={autocomplete}>
-      <InputField type="search" placeholder={placeholder} value={query} onChange={(e) => handleInputChange(e.target.value)} {...props} />
+      <InputField type="search" placeholder={placeholder} value={query}  onChange={(e) => handleInputChange(e.target.value)} {...props} />
       {isShow && (
         <ListWrapper>
           {optionsData.map((x, index) => (
