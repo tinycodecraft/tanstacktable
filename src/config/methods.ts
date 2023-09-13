@@ -6,6 +6,7 @@ import { twMerge } from "tailwind-merge";
 import { FilterFn, SortingFn, sortingFns } from "@tanstack/react-table";
 import { compareItems, rankItem, rankings } from "@tanstack/match-sorter-utils";
 
+
 const clsxm = (...classes: ClassValue[]) => twMerge(clsx(...classes));
 
 export const FETCHSIZE = 20;
@@ -25,7 +26,9 @@ const containsFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
 };
 const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
   // Rank the item where value is the filter value
-  const itemRank = rankItem(row.getValue(columnId), value);
+  const itemRank = rankItem(String( row.getValue(columnId) ?? "").toLowerCase().trim(), String( value ?? "").toLowerCase().trim(),{
+    threshold: rankings.EQUAL
+  });
 
   // Store the itemRank info
   addMeta({
