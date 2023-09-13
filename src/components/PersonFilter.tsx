@@ -13,7 +13,7 @@ export const PersonFilter = ({ column, table }: { column: Column<any, unknown>; 
   }, [column.getFacetedUniqueValues()]);
 
   return typeof colvalue !== "number" ? (
-    <>
+    <div className="mt-2">
       <datalist id={column.id + "list"}>
         {colsortvalues.slice(0, 5000).map((value: any) => (
           <option value={value} key={value} />
@@ -26,11 +26,12 @@ export const PersonFilter = ({ column, table }: { column: Column<any, unknown>; 
         label={`${column.id}(${column.getFacetedUniqueValues().size})`}
         list={column.id + " list"}
       />
-    </>
+    </div>
   ) : (
-    <>
+    <div className="flex items-center justify-between gap-2 font-normal leading-none opacity-70 mt-2">
       <DebounceInput
         type="number"
+        
         min={Number(column.getFacetedMinMaxValues()?.[0] ?? "")}
         max={Number(column.getFacetedMinMaxValues()?.[1] ?? "")}
         value={Number((colfiltervalue as [number, number])?.[0] ?? "")}
@@ -39,12 +40,14 @@ export const PersonFilter = ({ column, table }: { column: Column<any, unknown>; 
       />
       <DebounceInput
         type="number"
+        
+
         min={Number(column.getFacetedMinMaxValues()?.[0] ?? "")}
         max={Number(column.getFacetedMinMaxValues()?.[1] ?? "")}
         value={Number((colfiltervalue as [number, number])?.[1] ?? "")}
         onChange={(curvalue)=> column.setFilterValue((old: [number,number])=> [old?.[0],curvalue])}
         label={`Max ${column.getFacetedMinMaxValues()?.[1] ? (`(${column.getFacetedMinMaxValues()?.[1]})`): ''}`}
       />      
-    </>
+    </div>
   );
 };

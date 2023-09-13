@@ -83,41 +83,40 @@ export const PersonGroupTable = () => {
                         colSpan={header.colSpan}
                       >
                         {header.isPlaceholder ? null : (
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="flex items-center justify-between gap-2 font-normal leading-none opacity-70"
-                          >
-                            {header.column.getCanGroup() ? (
-                              // If the header can be grouped, let's add a toggle
+                          <div>
+                            <Typography
+                              variant="small"
+                              color="blue-gray"
+                              className="flex items-center justify-between gap-2 font-normal leading-none opacity-70"
+                            >
+                              {header.column.getCanGroup() ? (
+                                // If the header can be grouped, let's add a toggle
+                                <button
+                                  {...{
+                                    onClick: header.column.getToggleGroupingHandler(),
+                                    style: {
+                                      cursor: "pointer",
+                                    },
+                                  }}
+                                >
+                                  {header.column.getIsGrouped() ? `🛑(${header.column.getGroupedIndex()}) ` : `👊 `}
+                                </button>
+                              ) : null}{" "}
+                              {flexRender(header.column.columnDef.header, header.getContext())}{" "}
                               <button
                                 {...{
-                                  onClick: header.column.getToggleGroupingHandler(),
-                                  style: {
-                                    cursor: "pointer",
-                                  },
+                                  disabled: !header.column.getCanSort(),
+                                  onClick: header.column.getToggleSortingHandler(),
                                 }}
                               >
-                                {header.column.getIsGrouped() ? `🛑(${header.column.getGroupedIndex()}) ` : `👊 `}
+                                {{
+                                  asc: <ChevronUpIcon strokeWidth={2} className="h-4 w-4" />,
+                                  desc: <ChevronDownIcon strokeWidth={2} className="h-4 w-4" />,
+                                }[String(header.column.getIsSorted()) ?? null] ?? <ChevronUpDownIcon strokeWidth={2} className="h-4 w-4" />}
                               </button>
-                            ) : null}{" "}
-                            {flexRender(header.column.columnDef.header, header.getContext())}{" "}
-                            <button
-                            {...{
-                              disabled: !header.column.getCanSort(),
-                              onClick: header.column.getToggleSortingHandler(),
-
-                            }}
-                            >
-                              
-                              {{
-                                asc: <ChevronUpIcon strokeWidth={2} className="h-4 w-4" />,
-                                desc:  <ChevronDownIcon strokeWidth={2} className="h-4 w-4" />
-                                
-                              }[String(header.column.getIsSorted()) ?? null] ?? <ChevronUpDownIcon strokeWidth={2} className="h-4 w-4" /> }
-                            </button>
-                            
-                          </Typography>
+                            </Typography>
+                            {header.column.getCanFilter() ? (<PersonFilter column={header.column} table={table}></PersonFilter>): null}
+                          </div>
                         )}
                       </th>
                     );

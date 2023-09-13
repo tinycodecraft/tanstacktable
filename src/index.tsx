@@ -3,13 +3,25 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import { ThemeProvider } from "@material-tailwind/react";
+import { ThemeProvider, type InputStateStylesType } from "@material-tailwind/react";
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
+const customTheme = {
+  input: {
+    styles: {
+      base: {
+        container: {
+          minWidth: 'min-w-[50px]'
+        }
+      }
+
+    }
+  }
+}
 
 root.render(
   <React.StrictMode>
-    <ThemeProvider>
+    <ThemeProvider value={customTheme}>
       <App />
     </ThemeProvider>
   </React.StrictMode>
