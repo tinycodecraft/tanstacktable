@@ -10,6 +10,8 @@ declare module "@tanstack/table-core" {
     itemRank: RankingInfo;
   }
 }
+export type HuAutoRecordProps = Record<string,any>;
+
 
 export type CharacterType = {
   id: number;
