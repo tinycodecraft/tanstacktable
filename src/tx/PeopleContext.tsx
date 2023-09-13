@@ -44,6 +44,7 @@ export const PeopleTableProvider = ({ count = 100000, children }: { count: numbe
          * (otherwise, defaults to the value derived from accessorKey / accessorFn)
          */
         getGroupingValue: (row) => `${row.firstName} ${row.lastName}`,
+        enableGrouping: false,
       },
       {
         accessorFn: (row) => row.lastName,

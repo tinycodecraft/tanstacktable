@@ -1,5 +1,5 @@
-import { MagnifyingGlassIcon, ChevronUpDownIcon, ChevronUpIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
-import { PencilIcon, UserPlusIcon } from "@heroicons/react/24/solid";
+import { MagnifyingGlassIcon, ChevronUpDownIcon, ChevronUpIcon, ChevronDownIcon, UserPlusIcon,UserMinusIcon } from "@heroicons/react/24/outline";
+
 import PeopleContext from "../tx/PeopleContext";
 import { Card, CardHeader, Input, Typography, Button, CardBody, Select, CardFooter, Tabs, TabsHeader, Tab, Option } from "@material-tailwind/react";
 import { flexRender } from "@tanstack/react-table";
@@ -89,19 +89,17 @@ export const PersonGroupTable = () => {
                               color="blue-gray"
                               className="flex items-center justify-between gap-2 font-normal leading-none opacity-70"
                             >
-                              {header.column.getCanGroup() ? (
-                                // If the header can be grouped, let's add a toggle
                                 <button
                                   {...{
                                     onClick: header.column.getToggleGroupingHandler(),
                                     style: {
                                       cursor: "pointer",
                                     },
+                                    disabled: !header.column.getCanGroup(),
                                   }}
                                 >
-                                  {header.column.getIsGrouped() ? `🛑(${header.column.getGroupedIndex()}) ` : `👊 `}
+                                  {header.column.getCanGroup() ? (header.column.getIsGrouped() ? (<UserMinusIcon strokeWidth={2} className="h-4 w-4" />) : (<UserPlusIcon   strokeWidth={2} className="h-4 w-4" />)) : null}
                                 </button>
-                              ) : null}{" "}
                               {flexRender(header.column.columnDef.header, header.getContext())}{" "}
                               <button
                                 {...{
