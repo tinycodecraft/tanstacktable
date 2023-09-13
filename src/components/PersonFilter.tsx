@@ -23,7 +23,7 @@ export const PersonFilter = ({ column, table }: { column: Column<any, unknown>; 
         type="text"
         value={String(colfiltervalue ?? "")}
         onChange={(curvalue) => column.setFilterValue(curvalue)}
-        label={`${column.id}(${column.getFacetedUniqueValues().size})`}
+        label={`${column.columnDef.header}(${column.getFacetedUniqueValues().size})`}
         list={column.id + " list"}
       />
     </div>

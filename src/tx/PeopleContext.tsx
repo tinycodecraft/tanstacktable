@@ -48,18 +48,19 @@ export const PeopleTableProvider = ({ count = 100000, children }: { count: numbe
       {
         accessorFn: (row) => row.lastName,
         id: "lastName",
-        header: () => <span>Last Name</span>,
+        header: "Last Name",
         cell: (info) => info.getValue(),
       },
       {
         accessorKey: "age",
-        header: () => "Age",
+        header: "Age",
         aggregatedCell: ({ getValue }) => Math.round(getValue<number>() * 100) / 100,
         aggregationFn: "median",
       },
       {
         accessorKey: "visits",
-        header: () => <span>Visits</span>,
+        header: "Visits",
+        
         aggregationFn: "sum",
         // aggregatedCell: ({ getValue }) => getValue().toLocaleString(),
         enableGrouping: false,
