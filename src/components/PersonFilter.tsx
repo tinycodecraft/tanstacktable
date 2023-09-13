@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { type Column, type Table } from "@tanstack/react-table";
 import { DebounceInput } from "./DebounceInput";
+import SimpleAutoComplete from './SimAutoComplete'
 
 export const PersonFilter = ({ column, table }: { column: Column<any, unknown>; table: Table<any> }) => {
   const colvalue = table.getPreFilteredRowModel().flatRows[0]?.getValue(column.id);
@@ -13,20 +14,14 @@ export const PersonFilter = ({ column, table }: { column: Column<any, unknown>; 
   }, [column.getFacetedUniqueValues()]);
 
   return typeof colvalue !== "number" ? (
-    <div className="mt-2">
-      <datalist id={column.id + "list"}>
-        {colsortvalues.slice(0, 5000).map((value: any) => (
-          <option value={value} key={value} />
-        ))}
-      </datalist>
-      <DebounceInput
-        type="text"
-        value={String(colfiltervalue ?? "")}
-        onChange={(curvalue) => column.setFilterValue(curvalue)}
-        label={`${column.columnDef.header}(${column.getFacetedUniqueValues().size})`}
-        list={column.id + " list"}
-      />
-    </div>
+    <SimpleAutoComplete 
+    onChange={(curvalue) => column.setFilterValue(curvalue)}
+    value={String(colfiltervalue ?? "")}
+    options={colsortvalues}
+    placeholder={`${column.columnDef.header}(${column.getFacetedUniqueValues().size})`}
+    className="mt-1"
+    />
+
   ) : (
     <div className="flex items-center justify-between gap-2 font-normal leading-none opacity-70 mt-2">
       <DebounceInput
