@@ -98,7 +98,7 @@ export const PersonGroupTable = () => {
                                     disabled: !header.column.getCanGroup(),
                                   }}
                                 >
-                                  {header.column.getCanGroup() ? (header.column.getIsGrouped() ? (<UserMinusIcon strokeWidth={2} className="h-4 w-4" />) : (<UserPlusIcon   strokeWidth={2} className="h-4 w-4" />)) : null}
+                                  {header.column.getCanGroup() ? (header.column.getIsGrouped() ? (<UserMinusIcon strokeWidth={2} className="h-5 w-5" color="red" />) : (<UserPlusIcon   strokeWidth={2} className="h-4 w-4" />)) : null}
                                 </button>
                               {flexRender(header.column.columnDef.header, header.getContext())}{" "}
                               <button
