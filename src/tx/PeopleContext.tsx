@@ -94,7 +94,7 @@ export const PeopleTableProvider = ({ count = 100000, children }: { count: numbe
     onGlobalFilterChange: setGlobalFilter,
     getCoreRowModel: getCoreRowModel(),
     onGroupingChange: setGrouping,
-    globalFilterFn: fuzzyFilter,
+    globalFilterFn: containsFilter,
     getFilteredRowModel: getFilteredRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
     getGroupedRowModel: getGroupedRowModel(),

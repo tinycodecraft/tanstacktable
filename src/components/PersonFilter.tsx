@@ -3,7 +3,8 @@ import { type Column, type Table } from "@tanstack/react-table";
 import { DebounceInput } from "./DebounceInput";
 import SimpleAutoComplete from './SimAutoComplete'
 
-export const PersonFilter = ({ column, table }: { column: Column<any, unknown>; table: Table<any> }) => {
+
+export const PersonFilter = ({ column, table,combo=false }: { column: Column<any, unknown>; table: Table<any>,combo?:boolean }) => {
   const colvalue = table.getPreFilteredRowModel().flatRows[0]?.getValue(column.id);
 
   const colfiltervalue = column.getFilterValue();
@@ -14,6 +15,7 @@ export const PersonFilter = ({ column, table }: { column: Column<any, unknown>; 
   }, [column.getFacetedUniqueValues()]);
 
   return typeof colvalue !== "number" ? (
+
     <SimpleAutoComplete 
     onChange={(curvalue) => column.setFilterValue(curvalue)}
     value={String(colfiltervalue ?? "")}

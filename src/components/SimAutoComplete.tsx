@@ -21,9 +21,13 @@ const SimAutoComplete = ({
   };
 
   const handleClickOutSide = (e: Event) => {
+    console.log(e.target, `show value: ${isShow}`);
     if (autocomplete.current && !autocomplete.current.contains(e.target as Node)) {
+      console.log(e.target, ' is contained');
       setIsShow(false);
+
     }
+
   };
 
   const hilightSearchText = (text: string) => {
@@ -50,10 +54,11 @@ const SimAutoComplete = ({
         <ListWrapper>
           {optionsData.map((x, index) => (
             <ListItem
-              onClick={() => {
+              onClick={(e) => {
                 setQuery(x);
                 setIsShow(false);
                 onChange(x);
+                console.log(e.target, ' clicked');
               }}
               key={index}
             >
@@ -108,10 +113,11 @@ const ListItem = styled.button`
   width: 100%;
   background: #fff;
   outline: none;
-  border-bottom: 1px solid rgba(161, 161, 161, 0.993);
+  border:none;
   font-size: 14px;
   color: #5a5353;
-  font-weight: 400;
+  font-weight: 400
+  ;
 
 
   &:hover {
