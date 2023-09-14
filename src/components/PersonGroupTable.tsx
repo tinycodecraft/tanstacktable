@@ -1,4 +1,4 @@
-import { MagnifyingGlassIcon, ChevronUpDownIcon, ChevronUpIcon, ChevronDownIcon, UserPlusIcon,UserMinusIcon } from "@heroicons/react/24/outline";
+import { MagnifyingGlassIcon, ChevronUpDownIcon, ChevronUpIcon, ChevronDownIcon, UserPlusIcon, UserMinusIcon } from "@heroicons/react/24/outline";
 
 import PeopleContext from "../tx/PeopleContext";
 import { Card, CardHeader, Input, Typography, Button, CardBody, Select, CardFooter, Tabs, TabsHeader, Tab, Option } from "@material-tailwind/react";
@@ -25,9 +25,28 @@ const TABS = [
     value: "single",
   },
 ];
+
 export const PersonGroupTable = () => {
   const [activeTab, setActiveTab] = useState("all");
   const { table, filterValue, setFilterValue } = useContext(PeopleContext);
+  const tabChange = (value: string) => {
+    setActiveTab(value);
+    const statuscol = table?.getAllLeafColumns().find(e=> e.columnDef.header === "Status");
+    if (value !== "all") {
+      
+      if(statuscol)
+      {
+        statuscol.setFilterValue(value);
+      }
+      
+    }
+    else{
+      if(statuscol)
+      {
+        statuscol.setFilterValue('');
+      }
+    }
+  };
   return (
     <Card className="h-full w-full">
       <CardHeader floated={false} shadow={false} className="rounded-none">
@@ -53,7 +72,7 @@ export const PersonGroupTable = () => {
           <Tabs value={activeTab} className="w-full md:w-max">
             <TabsHeader>
               {TABS.map(({ label, value }) => (
-                <Tab key={value} value={value} onClick={() => setActiveTab(value)}>
+                <Tab key={value} value={value} onClick={() => tabChange(value)}>
                   &nbsp;&nbsp;{label}&nbsp;&nbsp;
                 </Tab>
               ))}
@@ -89,17 +108,23 @@ export const PersonGroupTable = () => {
                               color="blue-gray"
                               className="flex items-center justify-between gap-2 font-normal leading-none opacity-70"
                             >
-                                <button
-                                  {...{
-                                    onClick: header.column.getToggleGroupingHandler(),
-                                    style: {
-                                      cursor: "pointer",
-                                    },
-                                    disabled: !header.column.getCanGroup(),
-                                  }}
-                                >
-                                  {header.column.getCanGroup() ? (header.column.getIsGrouped() ? (<UserMinusIcon strokeWidth={2} className="h-5 w-5" color="red" />) : (<UserPlusIcon   strokeWidth={2} className="h-4 w-4" />)) : null}
-                                </button>
+                              <button
+                                {...{
+                                  onClick: header.column.getToggleGroupingHandler(),
+                                  style: {
+                                    cursor: "pointer",
+                                  },
+                                  disabled: !header.column.getCanGroup(),
+                                }}
+                              >
+                                {header.column.getCanGroup() ? (
+                                  header.column.getIsGrouped() ? (
+                                    <UserMinusIcon strokeWidth={2} className="h-5 w-5" color="red" />
+                                  ) : (
+                                    <UserPlusIcon strokeWidth={2} className="h-4 w-4" />
+                                  )
+                                ) : null}
+                              </button>
                               {flexRender(header.column.columnDef.header, header.getContext())}{" "}
                               <button
                                 {...{
@@ -113,7 +138,7 @@ export const PersonGroupTable = () => {
                                 }[String(header.column.getIsSorted()) ?? null] ?? <ChevronUpDownIcon strokeWidth={2} className="h-4 w-4" />}
                               </button>
                             </Typography>
-                            {header.column.getCanFilter() ? (<PersonFilter column={header.column} table={table}></PersonFilter>): null}
+                            {header.column.getCanFilter() ? <PersonFilter column={header.column} table={table}></PersonFilter> : null}
                           </div>
                         )}
                       </th>
