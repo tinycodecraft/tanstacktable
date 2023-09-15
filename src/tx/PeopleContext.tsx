@@ -18,6 +18,7 @@ import {
   type Table,
 } from "@tanstack/react-table";
 import { containsFilter, fuzzyFilter, fuzzySort, makeData } from "../config/methods";
+import dayjs from 'dayjs'
 
 export interface PeopleContextProps {
   table: Table<Person>;
@@ -73,12 +74,21 @@ export const PeopleTableProvider = ({ count = 100000, children }: { count: numbe
         filterFn: "fuzzy",
       },
       {
+        accessorKey: 'since',
+        header: 'Since',
+        cell: ({getValue})=> dayjs(getValue<Date>()).format('DD/MM/YYYY'),
+        aggregationFn: 'mean',
+        aggregatedCell: ({getValue})=> dayjs(getValue<Date>()).format('DD/MM/YYYY'),
+        getGroupingValue: row => `${dayjs(row.since).format('YYYYMM')}`,
+      },
+      {
         accessorKey: "progress",
         header: "Profile Progress",
         cell: ({ getValue }) => Math.round(getValue<number>() * 100) / 100 + "%",
         aggregationFn: "mean",
         aggregatedCell: ({ getValue }) => Math.round(getValue<number>() * 100) / 100 + "%",
         enableGrouping: false,
+        
       },
     ],
     []

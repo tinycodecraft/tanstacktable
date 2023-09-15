@@ -44,6 +44,7 @@ export type Person = {
   age: number;
   visits: number;
   progress: number;
+  since: Date;
   status: "relationship" | "complicated" | "single";
   subRows?: Person[];
 };
