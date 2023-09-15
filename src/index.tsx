@@ -4,6 +4,7 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { ThemeProvider, type InputStateStylesType } from "@material-tailwind/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
 const customTheme = {
@@ -18,12 +19,15 @@ const customTheme = {
     }
   }
 }
-
+const queryClient = new QueryClient();
 root.render(
   <React.StrictMode>
+    <QueryClientProvider client={queryClient}>
     <ThemeProvider value={customTheme}>
       <App />
     </ThemeProvider>
+    </QueryClientProvider>
+
   </React.StrictMode>
 );
 

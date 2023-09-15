@@ -138,7 +138,7 @@ export const PersonGroupTable = () => {
                                 }[String(header.column.getIsSorted()) ?? null] ?? <ChevronUpDownIcon strokeWidth={2} className="h-4 w-4" />}
                               </button>
                             </Typography>
-                            {header.column.getCanFilter() ? <PersonFilter column={header.column} table={table}></PersonFilter> : null}
+                            {header.column.getCanFilter() ? <PersonFilter column={header.column} table={table} combo={header.column.id==="status"}></PersonFilter> : null}
                           </div>
                         )}
                       </th>

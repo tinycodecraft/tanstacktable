@@ -21,9 +21,9 @@ const SimAutoComplete = ({
   };
 
   const handleClickOutSide = (e: Event) => {
-    console.log(e.target, `show value: ${isShow}`);
+    
     if (autocomplete.current && !autocomplete.current.contains(e.target as Node)) {
-      console.log(e.target, ' is contained');
+      
       setIsShow(false);
 
     }
@@ -58,7 +58,7 @@ const SimAutoComplete = ({
                 setQuery(x);
                 setIsShow(false);
                 onChange(x);
-                console.log(e.target, ' clicked');
+                
               }}
               key={index}
             >
