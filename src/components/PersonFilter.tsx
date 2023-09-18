@@ -3,11 +3,13 @@ import { type Column, type Table } from "@tanstack/react-table";
 import { DebounceInput } from "./DebounceInput";
 import SimpleAutoComplete from "./SimAutoComplete";
 import { Select, Option } from "@material-tailwind/react";
+import { SimDatePicker } from "./SimDatePicker";
 
 export const PersonFilter = ({ column, table, combo = false }: { column: Column<any, unknown>; table: Table<any>; combo?: boolean }) => {
   const colvalue = table.getPreFilteredRowModel().flatRows[0]?.getValue(column.id);
 
   const colfiltervalue = column.getFilterValue();
+  
   
 
   const colsortvalues = useMemo(() => {
@@ -21,7 +23,7 @@ export const PersonFilter = ({ column, table, combo = false }: { column: Column<
           value={String(colfiltervalue ?? "")}
           label={`${column.columnDef.header}(${column.getFacetedUniqueValues().size})`}
           onChange={(curvalue) => {
-            console.log(curvalue)
+            
             column.setFilterValue(curvalue);
 
           }}
@@ -36,7 +38,9 @@ export const PersonFilter = ({ column, table, combo = false }: { column: Column<
           })}
         </Select>
       </div>
-    ) : (
+    ) : (typeof colvalue !=='string' ? 
+    (<SimDatePicker label={`${column.columnDef.header}`} onChange={(value)=> value ? column.setFilterValue(value) : column.setFilterValue('')} />  
+    ):(
       <SimpleAutoComplete
         onChange={(curvalue) => column.setFilterValue(curvalue)}
         value={String(colfiltervalue ?? "")}
@@ -44,6 +48,7 @@ export const PersonFilter = ({ column, table, combo = false }: { column: Column<
         placeholder={`${column.columnDef.header}(${column.getFacetedUniqueValues().size})`}
         className="mt-1"
       />
+    )
     )
   ) : (
     <div className="flex items-center justify-between gap-2 font-normal leading-none opacity-70 mt-2">

@@ -5,24 +5,36 @@ import clsx, { type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { FilterFn, SortingFn, sortingFns } from "@tanstack/react-table";
 import { compareItems, rankItem, rankings } from "@tanstack/match-sorter-utils";
+import dayjs from "dayjs";
 
 
 const clsxm = (...classes: ClassValue[]) => twMerge(clsx(...classes));
 
 export const FETCHSIZE = 20;
 
+const daybiggerFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
+
+  if(!value)
+  return true;
+  if(isNaN(Number(value)) || isNaN(Number(row.getValue(columnId))) )
+  return false;
+  const filtervalue =Number( dayjs(value).format('YYYYMMDD'))
+  const curvalue = Number(dayjs(row.getValue(columnId)).format('YYYYMMDD'));
+
+  return filtervalue <= curvalue;
+
+};
+
+
 const containsFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
-  const itemRank = rankItem(
-    String(row.getValue(columnId) ?? "")
-      .toLowerCase()
-      .trim(),
-    String(value ?? "").toLowerCase().trim(),
-    { threshold: rankings.CONTAINS }
-  );
+  if(isNaN(Number(value)))
+  {
+    console.log('could not be number')
+    return String(value) ===String( row.getValue(value));
+  }
 
-  addMeta({ itemRank });
+  return Number( row.getValue(columnId)) === Number(value);
 
-  return itemRank.passed;
 };
 const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
   // Rank the item where value is the filter value
@@ -51,9 +63,9 @@ const fuzzySort: SortingFn<any> = (rowA, rowB, columnId) => {
   return dir === 0 ? sortingFns.alphanumeric(rowA, rowB, columnId) : dir;
 };
 
-const range = (len: number) => {
+const range = (len: number,start=0) => {
   const arr = [];
-  for (let i = 0; i < len; i++) {
+  for (let i = start; i < len+start; i++) {
     arr.push(i);
   }
   return arr;
@@ -85,4 +97,4 @@ const makeData = (...lens: number[]) => {
   return makeDataLevel();
 };
 
-export { range, newPerson, makeData, clsxm, fuzzyFilter, fuzzySort, containsFilter };
+export { range, newPerson, makeData, clsxm, fuzzyFilter, fuzzySort, containsFilter ,daybiggerFilter};

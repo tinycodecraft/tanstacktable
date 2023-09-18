@@ -48,7 +48,7 @@ export const CharacterProvider = ({ children, debug = false }: { children: React
   });
   const flatData = useMemo(() => data?.pages.flatMap((page) => page.results) ?? [], [data]);
   const totalDBRowCount = useMemo(()=> data?.pages?.[0]?.info?.count ?? 0,[data]);
-  console.log(flatData)
+  
   const columns = useMemo<ColumnDef<CharacterType>[]>(() => {
     return [
       {

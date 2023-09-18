@@ -19,7 +19,7 @@ function App() {
         </a>
       </header>
       <div className="pt-4 min-h-screen bg-gray-900">
-        <PeopleTableProvider count={100000}>
+        <PeopleTableProvider count={5000}>
           <PersonGroupTable></PersonGroupTable>
         </PeopleTableProvider>
         {/* <CharacterProvider>
