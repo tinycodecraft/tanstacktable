@@ -27,13 +27,19 @@ const daybiggerFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
 
 
 const containsFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
-  if(isNaN(Number(value)))
-  {
-    console.log('could not be number')
-    return String(value) ===String( row.getValue(value));
-  }
 
-  return Number( row.getValue(columnId)) === Number(value);
+
+  console.log('could not be number')
+    
+  const itemRank = rankItem(String( row.getValue(columnId) ?? "").toLowerCase().trim(), String( value ?? "").toLowerCase().trim(),{
+    threshold: rankings.MATCHES
+  });
+
+  // Store the itemRank info
+  addMeta({
+    itemRank,
+  });    
+  return itemRank.passed;
 
 };
 const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {

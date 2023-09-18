@@ -4,8 +4,9 @@ import PeopleContext from "../tx/PeopleContext";
 import { Card, CardHeader, Input, Typography, Button, CardBody, Select, CardFooter, Tabs, TabsHeader, Tab, Option } from "@material-tailwind/react";
 import { flexRender } from "@tanstack/react-table";
 import { PersonFilter } from "./PersonFilter";
+import { useDebounce } from "usehooks-ts";
 
-import React, { useContext, useState } from "react";
+import React, { useContext, useState ,useEffect} from "react";
 import { clsxm } from "../config/methods";
 const TABS = [
   {
@@ -28,7 +29,9 @@ const TABS = [
 
 export const PersonGroupTable = () => {
   const [activeTab, setActiveTab] = useState("all");
-  const { table, filterValue, setFilterValue } = useContext(PeopleContext);
+  const { table, setFilterValue } = useContext(PeopleContext);
+  const [searchvalue,setSearchValue] = useState<string>('')
+  const globfiltervalue = useDebounce(searchvalue)
   const tabChange = (value: string) => {
     setActiveTab(value);
     const statuscol = table?.getAllLeafColumns().find(e=> e.columnDef.header === "Status");
@@ -47,6 +50,13 @@ export const PersonGroupTable = () => {
       }
     }
   };
+
+  useEffect(()=> {
+    
+   setFilterValue &&  setFilterValue(globfiltervalue ?? '')
+
+  },[globfiltervalue])
+
   return (
     <Card className="h-full w-full">
       <CardHeader floated={false} shadow={false} className="rounded-none">
@@ -82,8 +92,8 @@ export const PersonGroupTable = () => {
             <Input
               label="Search"
               icon={<MagnifyingGlassIcon className="h-5 w-5" />}
-              value={filterValue}
-              onChange={(e) => setFilterValue && setFilterValue(e.target.value)}
+              value={searchvalue}
+              onChange={(e) => setSearchValue(e.target.value)}
             />
           </div>
         </div>

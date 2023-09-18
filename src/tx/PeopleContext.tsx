@@ -74,6 +74,7 @@ export const PeopleTableProvider = ({ count = 100000, children }: { count: numbe
         header: "Status",
         sortingFn: fuzzySort,
         filterFn: "fuzzy",
+        enableGlobalFilter:false,
       },
       {
         accessorKey: 'since',
@@ -84,6 +85,7 @@ export const PeopleTableProvider = ({ count = 100000, children }: { count: numbe
         getGroupingValue: row => `${dayjs(row.since).format('YYYYMM')}`,
         filterFn: daybiggerFilter,
         enableColumnFilter:true,
+        enableGlobalFilter:false,
         
       },
       {
