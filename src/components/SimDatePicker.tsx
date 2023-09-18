@@ -4,6 +4,7 @@ import { range } from "../config/methods";
 import dayjs from "dayjs";
 import "react-datepicker/dist/react-datepicker.module.css";
 import { useDebounce } from "usehooks-ts";
+import { ArrowLongLeftIcon, ArrowLongRightIcon, ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 
 //import {registerLocale, setDefaultLocale} from 'react-datepicker'
 //import hk from 'date-fns/locale/zh-HK'
@@ -50,7 +51,7 @@ export const SimDatePicker = ({
           }}
         >
           <button onClick={decreaseMonth} disabled={prevMonthButtonDisabled}>
-            {"<"}
+            <ArrowLongLeftIcon strokeWidth={2} className="w-4 h-4 mr-2" />
           </button>
           <select value={Number(dayjs(date).format("YYYY"))} onChange={({ target: { value } }) => changeYear(Number(value))}>
             {years.map((option) => (
@@ -69,7 +70,7 @@ export const SimDatePicker = ({
           </select>
 
           <button onClick={increaseMonth} disabled={nextMonthButtonDisabled}>
-            {">"}
+            <ArrowLongRightIcon strokeWidth={2} className="w-4 h-4 ml-2" />
           </button>
         </div>
       )}
