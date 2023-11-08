@@ -49,7 +49,7 @@ export type Person = {
 
 export const FETCHSIZE = 20
 
-export interface IRoundClockProps {
+export interface IRoundClockProps extends IKnotTemplateProps {
   // svg ------------------
   // A string specifying the backgroun color of the SVG.
   // The default value is undefined.
@@ -138,28 +138,7 @@ export interface IRoundClockProps {
 
   // knots -------------
   knots?: IKnotProps[]
-  // A string specifying the background color of the pointer.
-  // The default value is #163a86.
-  knotBgColor?: string
-  // A string specifying the background color of the pointer
-  // when it is selected.
-  // The default value is #000.
-  knotBgColorSelected?: string
-  // A string specifying the background color of the pointer
-  // when it is in a disabled state.
-  // The default value is #a8a8a8.
-  knotBgColorDisabled?: string
-  // A string specifying the background color of the pointer
-  // when the user hovers the mouse cursor over it.
-  // The default value is the same as pointerBgColorSelected.
-  knotBgColorHover?: string
-  // A number representing the border width of the pointer.
-  // The default value is 0.
-  knotBorder?: number
-  // A string specifying the border color of the pointer.
-  // The default value is #000.
-  knotBorderColor?: string
-  // A boolean value indicating whether the pointers
+   // A boolean value indicating whether the pointers
   // on the round slider can overlap each other.
   // The default value is false.
   knotsOverlap?: boolean
@@ -169,11 +148,6 @@ export interface IRoundClockProps {
   // instead of the default circular shape.
   // The default value is undefined.
   knotSVG?: ReactNode
-  // A number specifying the radius of the pointer.
-  // This determines the size of the circular shape r
-  // epresenting the pointer.
-  // The default value is 10.
-  knotRadius?: number
 
   // Rope ------------
   // A boolean value indicating whether to hide the Rope line.
@@ -385,15 +359,47 @@ export interface IRoundClockProps {
 }
 
 export interface IKnotProps {
+  // The radius of the pointer in SVG units.
+  // Default value = 10.
   radius?: number
+
+  // The value associated with the pointer.
+  // This value determines the position of the pointer on the slider.
+  // Default value = 0.
   value?: string | number
+
+  // The background color of the pointer.
+  // Default value = #163a86.
   bgColor?: string
+
+  // The background color of the pointer when it is selected or active.
+  // Default value = #000.
   bgColorSelected?: string
+
+  // The background color of the pointer when it is disabled.
+  // Default value = #a8a8a8.
   bgColorDisabled?: string
+
+  // The background color of the pointer when it is hovered.
+  // Default value is the same as bgColor.
   bgColorHover?: string
+
+  // The width of the border around the pointer in SVG units.
+  // Default value = 0.
   border?: number
+
+  // The color of the border around the pointer.
+  // Default value = #000.
   borderColor?: string
+
+  // Specifies whether the pointer is disabled or not.
+  // If set to true, the pointer will be inactive and non-interactive.
+  // Default value = false.
   disabled?: boolean
+
+  // A string that describes the purpose or function of the pointer for accessibility purposes.
+  // This label will be used as the aria-label attribute for the pointer element.
+  // Default value = undefined.
   ariaLabel?: string
 }
 
@@ -407,14 +413,63 @@ export interface IKnotBagInstance {
   knots: IKnotInstance[]
   maxRadius: number
 }
+export interface IStrokeProps {
+  strokeDasharray: string
+  strokeOffset: number
+}
 
-export interface IClockInstance {
-  cx:number;
-  cy:number;
-  radius: number;
-  size:number;
-  thickness: number;
-  border:number;
-  startAngleDeg:number;
-  endAngleDeg:number;
+
+
+export interface IKnotTemplateProps {
+
+   // A string specifying the background color of the pointer.
+  // The default value is #163a86.
+  knotBgColor?: string
+  // A string specifying the background color of the pointer
+  // when it is selected.
+  // The default value is #000.
+  knotBgColorSelected?: string
+  // A string specifying the background color of the pointer
+  // when it is in a disabled state.
+  // The default value is #a8a8a8.
+  knotBgColorDisabled?: string
+  // A string specifying the background color of the pointer
+  // when the user hovers the mouse cursor over it.
+  // The default value is the same as pointerBgColorSelected.
+  knotBgColorHover?: string
+  // A number representing the border width of the pointer.
+  // The default value is 0.
+  knotBorder?: number
+  // A string specifying the border color of the pointer.
+  // The default value is #000.
+  knotBorderColor?: string
+  // A number specifying the radius of the pointer.
+  // This determines the size of the circular shape r
+  // epresenting the pointer.
+  // The default value is 10.
+  knotRadius?: number
+}
+
+export interface IData {
+  min: number
+  max: number
+  stepAngleDeg: number
+  arrowStepAngleDeg: number
+  round: number
+  data: (string | number)[]
+  isClosedShape: boolean
+}
+
+export interface IClockInstance extends IData {
+  cx: number
+  cy: number
+  radius: number
+  size: number
+  thickness: number
+  border: number
+  startAngleDeg: number
+  endAngleDeg: number
+  left: number
+  top: number,
+  disabled: boolean
 }
