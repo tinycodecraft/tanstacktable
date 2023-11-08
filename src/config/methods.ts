@@ -7,46 +7,53 @@ import { FilterFn, SortingFn, sortingFns } from "@tanstack/react-table";
 import { compareItems, rankItem, rankings } from "@tanstack/match-sorter-utils";
 import dayjs from "dayjs";
 
-
 const clsxm = (...classes: ClassValue[]) => twMerge(clsx(...classes));
 
 export const FETCHSIZE = 20;
 
 const daybiggerFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
-
-  if(!value)
-  return true;
-  if(isNaN(Number(value)) || isNaN(Number(row.getValue(columnId))) )
-  return false;
-  const filtervalue =Number( dayjs(value).format('YYYYMMDD'))
-  const curvalue = Number(dayjs(row.getValue(columnId)).format('YYYYMMDD'));
+  if (!value) return true;
+  if (isNaN(Number(value)) || isNaN(Number(row.getValue(columnId)))) return false;
+  const filtervalue = Number(dayjs(value).format("YYYYMMDD"));
+  const curvalue = Number(dayjs(row.getValue(columnId)).format("YYYYMMDD"));
 
   return filtervalue <= curvalue;
-
 };
 
-
 const containsFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
+  console.log("could not be number");
 
-
-  console.log('could not be number')
-    
-  const itemRank = rankItem(String( row.getValue(columnId) ?? "").toLowerCase().trim(), String( value ?? "").toLowerCase().trim(),{
-    threshold: rankings.MATCHES
-  });
+  const itemRank = rankItem(
+    String(row.getValue(columnId) ?? "")
+      .toLowerCase()
+      .trim(),
+    String(value ?? "")
+      .toLowerCase()
+      .trim(),
+    {
+      threshold: rankings.MATCHES,
+    }
+  );
 
   // Store the itemRank info
   addMeta({
     itemRank,
-  });    
+  });
   return itemRank.passed;
-
 };
 const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
   // Rank the item where value is the filter value
-  const itemRank = rankItem(String( row.getValue(columnId) ?? "").toLowerCase().trim(), String( value ?? "").toLowerCase().trim(),{
-    threshold: rankings.EQUAL
-  });
+  const itemRank = rankItem(
+    String(row.getValue(columnId) ?? "")
+      .toLowerCase()
+      .trim(),
+    String(value ?? "")
+      .toLowerCase()
+      .trim(),
+    {
+      threshold: rankings.EQUAL,
+    }
+  );
 
   // Store the itemRank info
   addMeta({
@@ -69,9 +76,9 @@ const fuzzySort: SortingFn<any> = (rowA, rowB, columnId) => {
   return dir === 0 ? sortingFns.alphanumeric(rowA, rowB, columnId) : dir;
 };
 
-const range = (len: number,start=0) => {
+const range = (len: number, start = 0) => {
   const arr = [];
-  for (let i = start; i < len+start; i++) {
+  for (let i = start; i < len + start; i++) {
     arr.push(i);
   }
   return arr;
@@ -103,4 +110,9 @@ const makeData = (...lens: number[]) => {
   return makeDataLevel();
 };
 
-export { range, newPerson, makeData, clsxm, fuzzyFilter, fuzzySort, containsFilter ,daybiggerFilter};
+const valueOr = <T>(value: T | undefined, def: T) => {
+  if (value === undefined || value === null) return def;
+  return value;
+};
+
+export { range, newPerson,valueOr, makeData, clsxm, fuzzyFilter, fuzzySort, containsFilter, daybiggerFilter };

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Input, InputProps } from "@material-tailwind/react";
-import { useDebounce } from "usehooks-ts";
+import { useDebouncedState } from '@mantine/hooks';
 
 
 export const DebounceInput = ({
@@ -13,19 +13,7 @@ export const DebounceInput = ({
   onChange: (value: string | number) => void;
   debounce?: number;
 } & Omit<InputProps, "onChange" | "ref">) => {
-  const [value, setValue] = useState(initialValue);
-  const debouncevalue = useDebounce(value);
-  React.useEffect(() => {
-    if(String(debouncevalue) === "0")
-    {
-      onChange("");
-    }
-    else{
-      onChange(debouncevalue)
-    }
-    
-
-  }, [debouncevalue])
+  const [value,setValue] = useDebouncedState('',debounce);
 
   return <Input variant="outlined" value={value} onChange={(e)=> setValue(e.target.value)} {...props}></Input>;
 };
