@@ -6,6 +6,7 @@ import { twMerge } from 'tailwind-merge'
 import { FilterFn, SortingFn, sortingFns } from '@tanstack/react-table'
 import { compareItems, rankItem, rankings } from '@tanstack/match-sorter-utils'
 import dayjs from 'dayjs'
+import { isNumber } from 'mz-math'
 
 const clsxm = (...classes: ClassValue[]) => twMerge(clsx(...classes))
 
@@ -132,5 +133,8 @@ const value3Or = <T>(value: T | undefined, def1: T | undefined, def2: T): T => {
   }
   return value
 }
+const numberOr = (value: string | number | undefined | null, def = 0): number => {
+  return isNumber(value) ? Number(value) : def
+}
 
-export { noEmptyOr, range, newPerson, valueOr, value3Or, makeData, clsxm, fuzzyFilter, fuzzySort, containsFilter, daybiggerFilter }
+export { numberOr, noEmptyOr, range, newPerson, valueOr, value3Or, makeData, clsxm, fuzzyFilter, fuzzySort, containsFilter, daybiggerFilter }

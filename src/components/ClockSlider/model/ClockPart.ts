@@ -1,9 +1,10 @@
-import { IClockInstance, IStrokeProps } from 'src/config/types'
+import { IClockCore, IClockInstance, IData, IStrokeProps } from 'src/config/types'
 import { BasePart } from './BasePart'
 import { valueOr } from 'src/config/methods'
 import { getClockCenter } from 'src/config/geometries'
 import {
   RNDCLK_DF_ARROW_STEP,
+  RNDCLK_DF_KNOT_RADIUS,
   RNDCLK_DF_MAX,
   RNDCLK_DF_MIN,
   RNDCLK_DF_PATH_BORDER,
@@ -11,6 +12,7 @@ import {
   RNDCLK_DF_PATH_RADIUS,
   RNDCLK_DF_PATH_START_ANGLE,
   RNDCLK_DF_PATH_THICKNESS,
+  RNDCLK_DF_ROUND,
   RNDCLK_DF_STEP,
 } from 'src/config/constants'
 import { Vector3, convertRange, mod, setDecimalPlaces } from 'mz-math'
@@ -19,47 +21,73 @@ export class ClockPart extends BasePart {
   _i: IClockInstance
   _stroke: IStrokeProps
 
-  constructor(clockInfo: IClockInstance, knotRadius: number, step: number, arrowStep: number, top: number, left: number) {
+  constructor(
+    clockInfo: Partial<IClockInstance>,
+    knotRadius: number | undefined,
+    step: number | undefined,
+    arrowStep: number | undefined,
+    top: number,
+    left: number,
+  ) {
     super('ClockPart')
-    this._i = clockInfo
-    this._i.min = valueOr(this._i.min, RNDCLK_DF_MIN)
-    this._i.max = valueOr(this._i.max, RNDCLK_DF_MAX)
+
+    let min = valueOr(clockInfo.min, RNDCLK_DF_MIN)
+    let max = valueOr(clockInfo.max, RNDCLK_DF_MAX)
     const fixstep = valueOr(step, RNDCLK_DF_STEP)
     const fixArrowStep = valueOr(arrowStep, RNDCLK_DF_ARROW_STEP)
-    this._i.data = this._i.data || []
-    if (this._i.data.length > 0) {
-      const minIndex = this._i.data.findIndex((item) => item === this._i.min)
-      const maxIndex = this._i.data.findIndex((item) => item === this._i.max)
+    const data = clockInfo.data || []
+    const fixKnotRadius = valueOr(knotRadius, RNDCLK_DF_KNOT_RADIUS)
+    if (clockInfo.data && clockInfo.data.length > 0) {
+      const minIndex = clockInfo.data.findIndex((item) => item === min)
+      const maxIndex = clockInfo.data.findIndex((item) => item === max)
 
-      this._i.min = minIndex === -1 ? 0 : minIndex
-      this._i.max = maxIndex === -1 ? this._i.data.length : maxIndex
+      min = minIndex === -1 ? 0 : minIndex
+      max = maxIndex === -1 ? clockInfo.data.length : maxIndex
     }
-    this._i.radius = valueOr(this._i.radius, RNDCLK_DF_PATH_RADIUS)
-    this._i.thickness = valueOr(this._i.thickness, RNDCLK_DF_PATH_THICKNESS)
-    this._i.border = valueOr(this._i.thickness, RNDCLK_DF_PATH_BORDER)
-    const grossthickness = this._i.thickness + this._i.border * 2
-    const diff = Math.max(0, knotRadius * 2 - grossthickness)
-    const size = this._i.radius * 2 + grossthickness + diff
-    const [cx, cy] = getClockCenter(this._i.radius, knotRadius, this._i.thickness, this._i.border)
-    this._i.cx = cx
-    this._i.cy = cy
-    this._i.size = size
-    this._i.startAngleDeg = valueOr(this._i.startAngleDeg, RNDCLK_DF_PATH_START_ANGLE)
-    this._i.endAngleDeg = valueOr(this._i.endAngleDeg, RNDCLK_DF_PATH_END_ANGLE)
-    this._i.top = top
-    this._i.left = left
-    if (this._i.endAngleDeg < this._i.startAngleDeg) {
-      this._i.endAngleDeg += 360
+    const radius = valueOr(clockInfo.radius, RNDCLK_DF_PATH_RADIUS)
+    const thickness = valueOr(clockInfo.thickness, RNDCLK_DF_PATH_THICKNESS)
+    const border = valueOr(clockInfo.border, RNDCLK_DF_PATH_BORDER)
+    const grossthickness = thickness + border * 2
+    const diff = Math.max(0, fixKnotRadius * 2 - grossthickness)
+    const size = radius * 2 + grossthickness + diff
+    const [cx, cy] = getClockCenter(radius, fixKnotRadius, thickness, border)
+    const round = valueOr(clockInfo.round, RNDCLK_DF_ROUND)
+
+    const startAngleDeg = valueOr(clockInfo.startAngleDeg, RNDCLK_DF_PATH_START_ANGLE)
+    let endAngleDeg = valueOr(clockInfo.endAngleDeg, RNDCLK_DF_PATH_END_ANGLE)
+    if (endAngleDeg < startAngleDeg) {
+      endAngleDeg += 360
     }
 
-    this._i.isClosedShape = mod(this._i.startAngleDeg, 360) === mod(this._i.endAngleDeg, 360)
+    const isClosedShape = mod(startAngleDeg, 360) === mod(endAngleDeg, 360)
 
-    this._i.stepAngleDeg = (fixstep * 360) / (this._i.max - this._i.min)
-    this._i.arrowStepAngleDeg = (fixArrowStep * 360) / (this._i.max - this._i.min)
-    this._i.disabled = !!this._i.disabled
+    const stepAngleDeg = (fixstep * 360) / (max - min)
+    const arrowStepAngleDeg = (fixArrowStep * 360) / (max - min)
+    const disabled = !!clockInfo.disabled
     // create the strock
 
-    this._stroke = ClockPart.createStroke(this._i.startAngleDeg, this._i.endAngleDeg, this._i.radius)
+    this._i = {
+      arrowStepAngleDeg,
+      border,
+      cx,
+      cy,
+      data,
+      disabled,
+      endAngleDeg,
+      isClosedShape,
+      left,
+      max,
+      min,
+      radius,
+      round,
+      size,
+      startAngleDeg,
+      stepAngleDeg,
+      thickness,
+      top,
+    }
+
+    this._stroke = ClockPart.createStroke(startAngleDeg, endAngleDeg, radius)
   }
   public angle2value(angle: number): string | number {
     if (this._i.endAngleDeg < this._i.startAngleDeg) {
@@ -118,6 +146,13 @@ export class ClockPart extends BasePart {
     return this._stroke
   }
 
+  public get data(): IData {
+    return { ...(this._i as IData) }
+  }
+
+  public get core(): IClockCore {
+    return { ...(this._i as IClockCore) }
+  }
   public get angleStart(): number {
     return this._i.startAngleDeg
   }
@@ -135,15 +170,14 @@ export class ClockPart extends BasePart {
   public get disabled(): boolean {
     return this._i.disabled
   }
+  public get size(): number {
+    return this._i.size
+  }
 
   public get isClosed(): boolean {
     return this._i.isClosedShape
   }
-  public get clockCoordinates(): Vector3{
-    return [
-      this._i.cx,
-      this._i.cy,
-      this._i.radius
-    ]
+  public get clockCoordinates(): Vector3 {
+    return [this._i.cx, this._i.cy, this._i.radius]
   }
 }

@@ -358,10 +358,18 @@ export interface IRoundClockProps extends IKnotTemplateProps {
   animationDuration?: number
 }
 
-export interface IKnotProps {
+export interface IKnotCore {
   // The radius of the pointer in SVG units.
   // Default value = 10.
   radius?: number
+  // The width of the border around the pointer in SVG units.
+  // Default value = 0.
+  border?: number
+
+}
+
+export interface IKnotProps extends IKnotCore {
+
 
   // The value associated with the pointer.
   // This value determines the position of the pointer on the slider.
@@ -384,10 +392,6 @@ export interface IKnotProps {
   // Default value is the same as bgColor.
   bgColorHover?: string
 
-  // The width of the border around the pointer in SVG units.
-  // Default value = 0.
-  border?: number
-
   // The color of the border around the pointer.
   // Default value = #000.
   borderColor?: string
@@ -403,11 +407,14 @@ export interface IKnotProps {
   ariaLabel?: string
 }
 
-export interface IKnotInstance extends IKnotProps {
+export interface IKnotInstance extends Omit<Required<IKnotProps>,'value|ariaLabel'>  {
   id: string
   index: number
   angleDeg: number
   prevAngleDeg: number
+  value?: string|number
+  ariaLabel?: string
+
 }
 export interface IKnotBagInstance {
   knots: IKnotInstance[]
@@ -417,7 +424,6 @@ export interface IStrokeProps {
   strokeDasharray: string
   strokeOffset: number
 }
-
 
 
 export interface IKnotTemplateProps {
@@ -460,15 +466,25 @@ export interface IData {
   isClosedShape: boolean
 }
 
-export interface IClockInstance extends IData {
+export interface IClockCore {
   cx: number
   cy: number
-  radius: number
+  radius: number  
+  startAngleDeg: number
+  endAngleDeg: number
+}
+
+export interface IRopeInstance extends IClockCore {
+  knots: IKnotInstance[]  
+}
+
+
+export interface IClockInstance extends IData,IClockCore {
+
   size: number
   thickness: number
   border: number
-  startAngleDeg: number
-  endAngleDeg: number
+
   left: number
   top: number,
   disabled: boolean

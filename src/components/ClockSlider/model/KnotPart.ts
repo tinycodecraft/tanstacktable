@@ -29,7 +29,7 @@ export class KnotPart extends BasePart {
     const borderColor = valueOr(knotTemplate.knotBorderColor, RNDCLK_DF_KNOT_BORDER_COLOR)
     const disabled = clock.disabled
 
-    if (!knots || knots.length < 0) {
+    if (!knots || knots.length <= 0) {
       knotvalues.push({
         id: '0',
         index: 0,
@@ -43,7 +43,9 @@ export class KnotPart extends BasePart {
         border,
         borderColor,
         disabled,
-      })
+
+
+      } )
     } else {
       for (let i = 0; i < knots.length; i++) {
         const knot = knots[i]
@@ -82,12 +84,13 @@ export class KnotPart extends BasePart {
 
     this._i = {
       knots: knotvalues,
-      maxRadius: knotvalues.map((e) => (e.radius ?? 0) + (e.border ?? 0) / 2).reduce((prev, cur) => Math.max(prev, cur), -Infinity),
+      maxRadius: knotvalues.map((e) => e.radius  + e.border/2).reduce((prev, cur) => Math.max(prev, cur), -Infinity),
     }
   }
 
+  // clockCoordinates is cx,cy,radius
   public getClosestKnot(mouseAngle: number, clockCoordinates: Vector3): IKnotInstance | undefined {
-    if (!this._i.knots || this._i.knots.length < 0) return undefined
+    if (!this._i.knots || this._i.knots.length <= 0) return undefined
     if (this._i.knots.length === 1) return this._i.knots[0]
     const angleRad = convertRange(degreesToRadians(mouseAngle), 0, Math.PI * 2, 0, Math.PI)
     const mouseKnotOnArc = circleMovement([clockCoordinates[0], clockCoordinates[1]], angleRad, clockCoordinates[2])
@@ -108,4 +111,27 @@ export class KnotPart extends BasePart {
 
     return undefined
   }
+
+  // that return mouse drag nearest angle if the drag exceeds the arc itself
+  public getClosestEdge(startAngle:number, endAngle:number,currentKnot: IKnotInstance, clockCoordinates: Vector3) : number {
+
+    const angleRad = convertRange(degreesToRadians(currentKnot.angleDeg), 0, Math.PI * 2, 0, Math.PI); // [0, Math.PI*2] ---> [0, Math.PI]
+    const currentPointOnArc = circleMovement([ clockCoordinates[0], clockCoordinates[1] ], angleRad, clockCoordinates[2]);
+
+    const startAngleRad = convertRange(degreesToRadians(startAngle), 0, Math.PI * 2, 0, Math.PI); // [0, Math.PI*2] ---> [0, Math.PI]
+    const startPointOnArc = circleMovement([  clockCoordinates[0], clockCoordinates[1] ], startAngleRad, clockCoordinates[2]);
+
+    const endAngleRad = convertRange(degreesToRadians(endAngle), 0, Math.PI * 2, 0, Math.PI); // [0, Math.PI*2] ---> [0, Math.PI]
+    const endPointOnArc = circleMovement([  clockCoordinates[0], clockCoordinates[1] ], endAngleRad, clockCoordinates[2]);
+
+    const distance1 = v2Distance(currentPointOnArc, startPointOnArc);
+    const distance2 = v2Distance(currentPointOnArc, endPointOnArc);
+
+    return distance1 <= distance2 ? startAngle : endAngle;
+  }
+  
+  public get knots(): IKnotInstance[] {
+    return [...this._i.knots]
+  }
+
 }

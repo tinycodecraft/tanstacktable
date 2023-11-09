@@ -43,4 +43,7 @@ export const RNDCLK_DF_TICKS_VALUES_DISTANCE = 15;
 // Animation Defaults -----------------------
 export const RNDCLK_DF_ANIMATION_DURATION = 200;
 
+export const OUTLINENONE_CSS = {
+    outline: 'none'
+}
 
