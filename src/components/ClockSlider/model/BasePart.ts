@@ -1,5 +1,7 @@
-import { IClockInstance, IStrokeProps } from "src/config/types";
+import { IClockInstance, IKnotInstance, IKnotProps, IStrokeProps } from "src/config/types";
 import { ClockPart } from "./ClockPart";
+import { Vector3 } from "mz-math";
+import { KnotPart } from "./KnotPart";
 
 export abstract class BasePart {
     protected readonly name: string
@@ -21,6 +23,10 @@ export abstract class BasePart {
             strokeOffset
 
         }
+    }
+
+    public static getClosestKnot(knots:IKnotInstance,mouseAngle:number, clockCoordinates: Vector3 ): IKnotInstance {
+
     }
 
 }

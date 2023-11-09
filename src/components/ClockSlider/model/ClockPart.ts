@@ -13,7 +13,7 @@ import {
   RNDCLK_DF_PATH_THICKNESS,
   RNDCLK_DF_STEP,
 } from 'src/config/constants'
-import { convertRange, mod, setDecimalPlaces } from 'mz-math'
+import { Vector3, convertRange, mod, setDecimalPlaces } from 'mz-math'
 
 export class ClockPart extends BasePart {
   _i: IClockInstance
@@ -138,5 +138,12 @@ export class ClockPart extends BasePart {
 
   public get isClosed(): boolean {
     return this._i.isClosedShape
+  }
+  public get clockCoordinates(): Vector3{
+    return [
+      this._i.cx,
+      this._i.cy,
+      this._i.radius
+    ]
   }
 }
