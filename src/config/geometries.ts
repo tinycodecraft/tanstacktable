@@ -1,4 +1,4 @@
-import { Vector2, Vector3, mod, radiansToDegrees, setDecimalPlaces, v2Sub } from 'mz-math'
+import { IAnimationResult, Vector2, Vector3, mod, radiansToDegrees, setDecimalPlaces, v2Sub } from 'mz-math'
 import { IKnotCore } from './types'
 import { valueOr } from './methods'
 
@@ -17,9 +17,9 @@ const getClockSize = (circleRadius: number, maxPointerRadius: number, circleThic
 }
 // anchor is the left and top of whole clock
 const getMouseInAngle = (anchor: Vector2, mousePos: Vector2, clockCoordinates: Vector3): number => {
-  const mouseVector = v2Sub(v2Sub(mousePos, anchor), [clockCoordinates[0],clockCoordinates[1]])
-  let angleRad = Math.atan2(mouseVector[1] / clockCoordinates[2], mouseVector[0] / clockCoordinates[2] )
-  if (angleRad < 0) { 
+  const mouseVector = v2Sub(v2Sub(mousePos, anchor), [clockCoordinates[0], clockCoordinates[1]])
+  let angleRad = Math.atan2(mouseVector[1] / clockCoordinates[2], mouseVector[0] / clockCoordinates[2])
+  if (angleRad < 0) {
     angleRad += 2 * Math.PI
   }
   return radiansToDegrees(angleRad)
@@ -48,4 +48,42 @@ const getMaxRadius = (knotCores: IKnotCore[], radiusDefault: number, borderDefau
     .reduce((prev, cur) => Math.max(prev, cur), -Infinity)
 }
 
-export { getClockCenter, getMouseInAngle, getSteppedAngle, getAnglesInDiff, getMaxRadius }
+const getAnimationProgressAngle = (
+  progress: IAnimationResult,
+  animationSourceDegrees: number,
+  animationTargetDegrees: number,
+  startPathAngleDeg: number,
+) => {
+  let percent = progress.getPercent()
+  if (!percent) return
+
+  if (percent < 0) {
+    percent = 0
+  }
+
+  if (percent > 100) {
+    percent = 100
+  }
+
+  let angle1 = animationSourceDegrees % 360
+  let angle2 = animationTargetDegrees % 360
+
+  if (angle1 < startPathAngleDeg) {
+    angle1 += 360
+  }
+
+  if (angle2 < startPathAngleDeg) {
+    angle2 += 360
+  }
+
+  const isClockwise = angle2 > angle1
+
+  if (isClockwise) {
+    const clockwiseDistance = (angle2 - angle1 + 360) % 360
+    return mod(animationSourceDegrees + (percent * clockwiseDistance) / 100, 360)
+  } else {
+    const counterclockwiseDistance = (angle1 - angle2 + 360) % 360
+    return mod(animationSourceDegrees - (percent * counterclockwiseDistance) / 100, 360)
+  }
+}
+export { getAnimationProgressAngle,getClockCenter, getMouseInAngle, getSteppedAngle, getAnglesInDiff, getMaxRadius }
