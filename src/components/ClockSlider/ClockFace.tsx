@@ -4,7 +4,7 @@ import { KnotPart } from './model/KnotPart'
 import { IAnimationResult, animate, newId } from 'mz-math'
 import { IKnotInstance } from 'src/config/types'
 import { getAnimationProgressAngle, getMouseInAngle } from 'src/config/geometries'
-import { RNDCLK_DF_ANIMATION_DURATION } from 'src/config/constants'
+import { RNDCLK_DF_ANIMATION_DURATION, RNDCLK_DF_PATH_BG_COLOR, RNDCLK_DF_PATH_BORDER_COLOR } from 'src/config/constants'
 import { valueOr } from 'src/config/methods'
 
 interface IClockFaceProps {
@@ -12,18 +12,22 @@ interface IClockFaceProps {
   knotPart: KnotPart
   animateOnClick?: boolean
   animationDuration?: number
+  pathBorderColor?: string
+  pathBgColor?: string
   setKnot: (knot: IKnotInstance, newAngleDeg: number) => void
   left?: number
   top?: number
 }
 
 export const ClockFace = (props: IClockFaceProps) => {
-  const { clockPart, knotPart, setKnot, animateOnClick, animationDuration, top, left } = props
+  const { clockPart, knotPart, setKnot, animateOnClick, animationDuration, top, left, pathBgColor, pathBorderColor } = props
   const [animation, setAnimation] = useState<IAnimationResult | null>(null)
   const [maskId] = useState(newId())
   const animationClosestPointer = useRef<IKnotInstance | null>(null)
   const animationSourceDegrees = useRef(0)
   const animationTargetDegrees = useRef(0)
+  const stroke = clockPart.stroke
+  const [cx, cy, radius] = clockPart.clockCoordinates
 
   const onClick = (evt: React.MouseEvent<SVGAElement, MouseEvent>) => {
     if (!clockPart || clockPart.disabled || (animation && animation.isAnimating()) || !top || !left) return
@@ -74,5 +78,40 @@ export const ClockFace = (props: IClockFaceProps) => {
     [animateOnClick, animationDuration],
   )
 
-  return <g onClick={onClick}></g>
+  return (
+    <g onClick={onClick}>
+      {clockPart.border > 0 && (
+        <circle
+          strokeDasharray={stroke.strokeDasharray}
+          strokeDashoffset={stroke.strokeOffset}
+          cx={cx}
+          cy={cy}
+          r={radius}
+          stroke={valueOr(pathBorderColor, RNDCLK_DF_PATH_BORDER_COLOR)}
+          strokeWidth={clockPart.thickness + clockPart.border * 2}
+          fill='none'
+          shapeRendering='geometricPrecision'
+          strokeLinecap='round'
+          cursor='pointer'
+          data-type='path-border'
+          className='mz-round-slider-path-border'
+        />
+      )}
+      <circle
+        strokeDasharray={stroke.strokeDasharray}
+        strokeDashoffset={stroke.strokeOffset}
+        cx={cx}
+        cy={cy}
+        r={radius}
+        stroke={valueOr(pathBgColor, RNDCLK_DF_PATH_BG_COLOR)}
+        strokeWidth={clockPart.thickness}
+        fill='none'
+        shapeRendering='geometricPrecision'
+        strokeLinecap='round'
+        cursor='pointer'
+        data-type='path'
+        className='mz-round-slider-path'
+      />
+    </g>
+  )
 }

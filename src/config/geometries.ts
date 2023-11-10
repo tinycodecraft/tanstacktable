@@ -10,6 +10,17 @@ const getClockCenter = (circleRadius: number, maxPointerRadius: number, circleTh
   return [val, val]
 }
 
+const checkAngleInArc = (startAngleDeg: number, endAngleDeg: number, currentDegrees: number): boolean => {
+  if (startAngleDeg > endAngleDeg) {
+    endAngleDeg += 360
+  }
+
+  return (
+    (currentDegrees >= startAngleDeg && currentDegrees <= endAngleDeg) ||
+    (currentDegrees + 360 >= startAngleDeg && currentDegrees + 360 <= endAngleDeg)
+  )
+}
+
 const getClockSize = (circleRadius: number, maxPointerRadius: number, circleThickness: number, circleBorder: number): number => {
   const thickness = circleThickness + circleBorder * 2
   const diff = Math.max(0, maxPointerRadius * 2 - thickness)
@@ -86,4 +97,4 @@ const getAnimationProgressAngle = (
     return mod(animationSourceDegrees - (percent * counterclockwiseDistance) / 100, 360)
   }
 }
-export { getAnimationProgressAngle,getClockCenter, getMouseInAngle, getSteppedAngle, getAnglesInDiff, getMaxRadius }
+export { checkAngleInArc, getAnimationProgressAngle, getClockCenter, getMouseInAngle, getSteppedAngle, getAnglesInDiff, getMaxRadius }

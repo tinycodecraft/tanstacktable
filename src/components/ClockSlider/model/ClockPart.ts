@@ -123,15 +123,6 @@ export class ClockPart extends BasePart {
     return mod(convertRange(_value, this._i.min, this._i.max, this._i.startAngleDeg, this._i.endAngleDeg), 360)
   }
 
-  public isAngleInArc(currentAngle: number): boolean {
-    if (this._i.endAngleDeg < this._i.startAngleDeg) {
-      this._i.endAngleDeg += 360
-    }
-    return (
-      (currentAngle >= this._i.startAngleDeg && currentAngle <= this._i.endAngleDeg) ||
-      (currentAngle + 360 >= this._i.startAngleDeg && currentAngle + 360 <= this._i.endAngleDeg)
-    )
-  }
 
   public get arcAngle(): number {
     if (this._i.endAngleDeg < this._i.startAngleDeg) {
@@ -153,6 +144,11 @@ export class ClockPart extends BasePart {
   public get core(): IClockCore {
     return { ...(this._i as IClockCore) }
   }
+
+  public get border(): number {
+    return this._i.border
+  }
+
   public get angleStart(): number {
     return this._i.startAngleDeg
   }
@@ -165,6 +161,10 @@ export class ClockPart extends BasePart {
   }
   public get arrowStepAngle(): number {
     return this._i.arrowStepAngleDeg
+  }
+
+  public get thickness(): number {
+    return this._i.thickness
   }
 
   public get disabled(): boolean {

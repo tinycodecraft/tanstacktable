@@ -129,6 +129,18 @@ export class KnotPart extends BasePart {
 
     return distance1 <= distance2 ? startAngle : endAngle;
   }
+
+  // try to return length , prevAngle, nextAngle
+  public getAdjacentKnotInfo(index: number) : Vector3 {
+
+    const length = this._i.knots.length;
+    const prevIndex = mod(index-1,length)
+    const nextIndex = mod(index+1, length)
+    const prevAngle = this._i.knots[prevIndex].angleDeg
+    const nextAngle = this._i.knots[nextIndex].angleDeg
+    return [length,prevIndex,nextIndex]
+
+  }
   
   public get knots(): IKnotInstance[] {
     return [...this._i.knots]
