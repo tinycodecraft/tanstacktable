@@ -1,6 +1,25 @@
-import { IAnimationResult, Vector2, Vector3, mod, radiansToDegrees, setDecimalPlaces, v2Sub } from 'mz-math'
+import { IAnimationResult, Vector2, Vector3, circleMovement, convertRange, degreesToRadians, mod, radiansToDegrees, setDecimalPlaces, v2Distance, v2Sub } from 'mz-math'
 import { IKnotCore } from './types'
 import { valueOr } from './methods'
+
+  // that return mouse drag nearest angle if the drag exceeds the arc itself
+  const getClosestEdge=(startAngle:number, endAngle:number, currentDegree:number, clockCoordinates: Vector3) : number =>{
+
+    const angleRad = convertRange(degreesToRadians(currentDegree), 0, Math.PI * 2, 0, Math.PI); // [0, Math.PI*2] ---> [0, Math.PI]
+    const currentPointOnArc = circleMovement([ clockCoordinates[0], clockCoordinates[1] ], angleRad, clockCoordinates[2]);
+
+    const startAngleRad = convertRange(degreesToRadians(startAngle), 0, Math.PI * 2, 0, Math.PI); // [0, Math.PI*2] ---> [0, Math.PI]
+    const startPointOnArc = circleMovement([  clockCoordinates[0], clockCoordinates[1] ], startAngleRad, clockCoordinates[2]);
+
+    const endAngleRad = convertRange(degreesToRadians(endAngle), 0, Math.PI * 2, 0, Math.PI); // [0, Math.PI*2] ---> [0, Math.PI]
+    const endPointOnArc = circleMovement([  clockCoordinates[0], clockCoordinates[1] ], endAngleRad, clockCoordinates[2]);
+
+    const distance1 = v2Distance(currentPointOnArc, startPointOnArc);
+    const distance2 = v2Distance(currentPointOnArc, endPointOnArc);
+
+    return distance1 <= distance2 ? startAngle : endAngle;
+  }
+
 
 const getClockCenter = (circleRadius: number, maxPointerRadius: number, circleThickness: number, circleBorder: number): Vector2 => {
   const size = getClockSize(circleRadius, maxPointerRadius, circleThickness, circleBorder)
@@ -97,4 +116,4 @@ const getAnimationProgressAngle = (
     return mod(animationSourceDegrees - (percent * counterclockwiseDistance) / 100, 360)
   }
 }
-export { checkAngleInArc, getAnimationProgressAngle, getClockCenter, getMouseInAngle, getSteppedAngle, getAnglesInDiff, getMaxRadius }
+export { checkAngleInArc, getAnimationProgressAngle, getClosestEdge,getClockCenter, getMouseInAngle, getSteppedAngle, getAnglesInDiff, getMaxRadius }

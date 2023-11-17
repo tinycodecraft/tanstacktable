@@ -2,7 +2,7 @@
 import { IKnotBagInstance, IKnotInstance, IKnotProps, IKnotTemplateProps } from 'src/config/types'
 import { BasePart } from './BasePart'
 import { ClockPart } from './ClockPart'
-import { Vector3, circleMovement, convertRange, degreesToRadians, mod, v2Distance } from 'mz-math'
+import { Vector2, Vector3, circleMovement, convertRange, degreesToRadians, mod, v2Distance } from 'mz-math'
 import { noEmptyOr, valueOr } from 'src/config/methods'
 import {
   RNDCLK_DF_KNOT_BG_COLOR,
@@ -112,34 +112,43 @@ export class KnotPart extends BasePart {
     return undefined
   }
 
-  // that return mouse drag nearest angle if the drag exceeds the arc itself
-  public getClosestEdge(startAngle:number, endAngle:number,currentKnot: IKnotInstance, clockCoordinates: Vector3) : number {
-
-    const angleRad = convertRange(degreesToRadians(currentKnot.angleDeg), 0, Math.PI * 2, 0, Math.PI); // [0, Math.PI*2] ---> [0, Math.PI]
-    const currentPointOnArc = circleMovement([ clockCoordinates[0], clockCoordinates[1] ], angleRad, clockCoordinates[2]);
-
-    const startAngleRad = convertRange(degreesToRadians(startAngle), 0, Math.PI * 2, 0, Math.PI); // [0, Math.PI*2] ---> [0, Math.PI]
-    const startPointOnArc = circleMovement([  clockCoordinates[0], clockCoordinates[1] ], startAngleRad, clockCoordinates[2]);
-
-    const endAngleRad = convertRange(degreesToRadians(endAngle), 0, Math.PI * 2, 0, Math.PI); // [0, Math.PI*2] ---> [0, Math.PI]
-    const endPointOnArc = circleMovement([  clockCoordinates[0], clockCoordinates[1] ], endAngleRad, clockCoordinates[2]);
-
-    const distance1 = v2Distance(currentPointOnArc, startPointOnArc);
-    const distance2 = v2Distance(currentPointOnArc, endPointOnArc);
-
-    return distance1 <= distance2 ? startAngle : endAngle;
-  }
 
   // try to return length , prevAngle, nextAngle
-  public getAdjacentKnotInfo(index: number) : Vector3 {
+  // clockAngleInfo is from clockPart give startangle, endangle
+  public getAdjacentKnotInfo(index: number,clockAngleInfo: Vector2, isclosed: boolean) : Vector3 {
 
     const length = this._i.knots.length;
-    const prevIndex = mod(index-1,length)
-    const nextIndex = mod(index+1, length)
-    const prevAngle = this._i.knots[prevIndex].angleDeg
-    const nextAngle = this._i.knots[nextIndex].angleDeg
-    return [length,prevIndex,nextIndex]
+    if(isclosed)
+    {
+      
+      const prevIndex = mod(index-1,length)
+      const nextIndex = mod(index+1, length)
+      const prevAngle = this._i.knots[prevIndex].angleDeg
+      const nextAngle = this._i.knots[nextIndex].angleDeg
+      return [length,prevAngle,nextAngle]
+    }
+    else{
 
+      const prevAngle = index ===0 ?  clockAngleInfo[0]:   this._i.knots[index-1].angleDeg;
+      const nextAngle = index === this._i.knots.length-1 ? clockAngleInfo[1]: this._i.knots[index+1].angleDeg;
+      return [length, prevAngle,nextAngle]
+    }
+
+  }
+
+
+  public getNewKnots(knotIndex: number, newAngleDeg: number): IKnotInstance[] {
+      const changed = this._i.knots[knotIndex].angleDeg !== newAngleDeg
+      if(changed)
+      {
+        const newKnots = [...this._i.knots]
+        newKnots[knotIndex].prevAngleDeg =this._i.knots[knotIndex].angleDeg;
+        newKnots[knotIndex].angleDeg = newAngleDeg;
+
+        return newKnots
+
+      }
+      return [...this._i.knots]
   }
   
   public get knots(): IKnotInstance[] {

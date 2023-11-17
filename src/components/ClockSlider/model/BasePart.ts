@@ -9,7 +9,14 @@ export abstract class BasePart {
   protected constructor(thisname: string) {
     this.name = thisname
   }
-  public static getClockPart(clockinfo:Partial<IClockInstance>, knotRadius: number|undefined, step: number|undefined, arrowStep: number|undefined, top: number, left: number): ClockPart {
+  public static getClockPart(
+    clockinfo: Partial<IClockInstance>,
+    knotRadius: number | undefined,
+    step: number | undefined,
+    arrowStep: number | undefined,
+    top: number,
+    left: number,
+  ): ClockPart {
     return new ClockPart(clockinfo, knotRadius, step, arrowStep, top, left)
   }
 
@@ -19,6 +26,24 @@ export abstract class BasePart {
 
   public static getRopePart(clockcore: IClockCore, knots: IKnotInstance[]) {
     return new RopePart(clockcore, knots)
+  }
+
+  public static getKnotsProps(clockpart: ClockPart, newKnots: IKnotInstance[]): IKnotProps[] {
+    const updatedKnotProps: IKnotProps[] = newKnots.map((knot) => {
+      const valForKnot = clockpart.angle2value(knot.angleDeg)
+      return {
+        radius: knot.radius,
+        value: valForKnot,
+        bgColor: knot.bgColor,
+        bgColorSelected: knot.bgColorSelected,
+        bgColorDisabled: knot.bgColorDisabled,
+        border: knot.border,
+        borderColor: knot.borderColor,
+        disabled: knot.disabled,
+        ariaLabel: knot.ariaLabel,
+      }
+    })
+    return updatedKnotProps
   }
 
   public static createStroke(startDeg: number, endDeg: number, radius: number): IStrokeProps {
