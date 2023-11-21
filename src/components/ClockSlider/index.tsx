@@ -7,14 +7,15 @@ import { RNDCLK_DF_KNOT_BORDER, RNDCLK_DF_KNOT_RADIUS, RNDCLK_DF_MAX, RNDCLK_DF_
 import { numberOr } from 'src/config/methods'
 import { checkAngleInArc, getClosestEdge, getMaxRadius, getSteppedAngle } from 'src/config/geometries'
 import { BasePart } from './model/BasePart'
+import { ClockFace } from './ClockFace'
 
 export const ClockSlider = (props: IRoundClockProps) => {
   const [data, setData] = useState<IData | null>(null)
 
   const [clockPart, setClockPart] = useState<ClockPart | null>(null)
-  const [knotPart, setKnotPart] = useState<KnotPart | null>(null)
-  const [ knots, setKnots] = useState<IKnotInstance[]>([])
+  const [knotPart, setKnotPart] = useState<KnotPart | null>(null)  
   const [selectedPointerId, setSelectedPointerId] = useState('')
+  const { animateOnClick, animationDuration, pathBgColor, pathBorderColor } = props
 
   const prevAngleDegRef = useRef<number | null>(null)
   const svgRef = useRef<SVGSVGElement>(null)
@@ -69,7 +70,7 @@ export const ClockSlider = (props: IRoundClockProps) => {
     if (clockPart) {
       const myknotPart = KnotPart.getKnotPart(clockPart, props.knots || [], props)
       setKnotPart(myknotPart)
-      setKnots(myknotPart.knots)
+      
     }
   }, [
     props.knotRadius,
@@ -153,15 +154,15 @@ export const ClockSlider = (props: IRoundClockProps) => {
           const counterClockwise = counterClockwiseNew && counterClockwisePrev
 
           if (clockwise || counterClockwise) {
-            const newKnots =  knotPart.getNewKnots(knot.index,splitPointDeg)
-            setKnots(newKnots)
-            if(props.onChange)
-            {
-              const newKnotProps = KnotPart.getKnotsProps(clockPart,newKnots)
+            const newKnots = knotPart.getNewKnots(knot.index, splitPointDeg)
+            knotPart.knots = newKnots
+            setKnotPart(knotPart)
+            if (props.onChange) {
+              const newKnotProps = KnotPart.getKnotsProps(clockPart, newKnots)
               props.onChange(newKnotProps)
             }
             setSelectedPointerId(knot.id)
-            focusKnot(knot.id,svgRef.current)
+            focusKnot(knot.id, svgRef.current)
 
             // please update (actually no update)
             return
@@ -187,22 +188,22 @@ export const ClockSlider = (props: IRoundClockProps) => {
       }
     }
 
-    const newKnots =  knotPart.getNewKnots(knot.index,newAngleDeg)
-    setKnots(newKnots)
-    if(props.onChange)
-    {
-      const newKnotProps = KnotPart.getKnotsProps(clockPart,newKnots)
+    const newKnots = knotPart.getNewKnots(knot.index, newAngleDeg)
+    knotPart.knots = newKnots
+    setKnotPart(knotPart)
+    if (props.onChange) {
+      const newKnotProps = KnotPart.getKnotsProps(clockPart, newKnots)
       props.onChange(newKnotProps)
     }
     setSelectedPointerId(knot.id)
-    focusKnot(knot.id,svgRef.current)
+    focusKnot(knot.id, svgRef.current)
 
     // please update ( actually no update)
   }
 
   return (
     <>
-      {clockPart && (
+      {clockPart && knotPart && (
         <svg
           ref={svgRef}
           xmlns='http://www.w3.org/2000/svg'
@@ -215,6 +216,18 @@ export const ClockSlider = (props: IRoundClockProps) => {
           className={`mz-round-slider ${props.disabled ? 'mz-round-slider-disabled' : ''}`}
         >
           {props.SvgDefs && <defs>{props.SvgDefs}</defs>}
+
+          <ClockFace
+            clockPart={clockPart}
+            knotPart={knotPart}
+            setKnot={refreshKnot}
+            animateOnClick={animateOnClick}
+            animationDuration={animationDuration}
+            left={left}
+            top={top}
+            pathBgColor={pathBgColor}
+            pathBorderColor={pathBorderColor}
+          />
         </svg>
       )}
     </>

@@ -150,6 +150,14 @@ export class KnotPart extends BasePart {
       }
       return [...this._i.knots]
   }
+
+  public set knots(newKnots: IKnotInstance[]) {
+    this._i = {
+      knots: [...newKnots],
+      maxRadius: newKnots.map((e) => e.radius  + e.border/2).reduce((prev, cur) => Math.max(prev, cur), -Infinity),
+
+    }
+  }
   
   public get knots(): IKnotInstance[] {
     return [...this._i.knots]
