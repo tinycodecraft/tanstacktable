@@ -2,7 +2,7 @@ import React, {  useEffect, useRef, useState } from 'react'
 import { ClockPart } from './model/ClockPart'
 import { KnotPart } from './model/KnotPart'
 import { IAnimationResult, animate, newId } from 'mz-math'
-import { IKnotInstance } from 'src/config/types'
+import { IAnchorProps, IKnotInstance } from 'src/config/types'
 import { getAnimationProgressAngle, getMouseInAngle } from 'src/config/geometries'
 import { RNDCLK_DF_ANIMATION_DURATION, RNDCLK_DF_PATH_BG_COLOR, RNDCLK_DF_PATH_BORDER_COLOR } from 'src/config/constants'
 import { valueOr } from 'src/config/methods'
@@ -18,12 +18,12 @@ interface IClockFaceProps {
   pathBgColor?: string
   pathInnerBgColor?: string
   setKnot: (itClock:ClockPart,itKnots:KnotPart,knot: IKnotInstance, newAngleDeg: number,isdisabled?:boolean) => void
-  left?: number
-  top?: number
+  anchor: IAnchorProps
+
 }
 
 export const ClockFace = (props: IClockFaceProps) => {
-  const { disabled,clockPart, knotPart, setKnot, animateOnClick, animationDuration, top, left, pathBgColor, pathBorderColor, pathInnerBgColor } = props
+  const { disabled,clockPart, knotPart, setKnot, animateOnClick, animationDuration, anchor: { top, left}, pathBgColor, pathBorderColor, pathInnerBgColor } = props
   const [animation, setAnimation] = useState<IAnimationResult | null>(null)
   const [maskId] = useState(newId())
   const animationClosestPointer = useRef<IKnotInstance | null>(null)

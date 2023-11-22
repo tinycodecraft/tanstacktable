@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { IClockInstance, IData, IKnotInstance, IRoundClockProps } from 'src/config/types'
+import { IAnchorProps, IClockInstance, IData, IKnotInstance, IRoundClockProps } from 'src/config/types'
 import { ClockPart } from './model/ClockPart'
 import { KnotPart } from './model/KnotPart'
 import { isAngleBetween, isNumber, mod } from 'mz-math'
@@ -8,6 +8,8 @@ import { numberOr } from 'src/config/methods'
 import { checkAngleInArc, getClosestEdge, getMaxRadius, getSteppedAngle } from 'src/config/geometries'
 import { BasePart } from './model/BasePart'
 import { ClockFace } from './ClockFace'
+
+
 
 export const ClockSlider = (props: IRoundClockProps) => {
   const [data, setData] = useState<IData | null>(null)
@@ -19,7 +21,7 @@ export const ClockSlider = (props: IRoundClockProps) => {
 
   const prevAngleDegRef = useRef<number | null>(null)
   const svgRef = useRef<SVGSVGElement>(null)
-  const { left, top } = !svgRef || !svgRef.current ? { left: 0, top: 0 } : svgRef.current.getBoundingClientRect()
+  const [anchor, setAnchor] = useState<IAnchorProps>(!svgRef || !svgRef.current ? { left: 0, top: 0 } : svgRef.current.getBoundingClientRect())
 
   useEffect(() => {
     const clearSelectedPointer = (evt: MouseEvent) => {
@@ -29,15 +31,18 @@ export const ClockSlider = (props: IRoundClockProps) => {
 
       setSelectedPointerId('')
     }
-
+    if (svgRef && svgRef.current) {
+      setAnchor(svgRef.current.getBoundingClientRect())
+    }
     document.addEventListener('mousedown', clearSelectedPointer)
 
     return () => {
       document.removeEventListener('mousedown', clearSelectedPointer)
     }
-  }, [])
+  }, [svgRef])
 
   useEffect(() => {
+    const { top, left } = anchor
     const myclockPart = ClockPart.getClockPart(
       {
         min: numberOr(props.min, RNDCLK_DF_MIN),
@@ -64,7 +69,7 @@ export const ClockSlider = (props: IRoundClockProps) => {
     if (haschanged) {
       setData(myclockPart.data)
     }
-  }, [data, props, left, top])
+  }, [data, props, anchor])
 
   useEffect(() => {
     if (clockPart !== null) {
@@ -224,8 +229,7 @@ export const ClockSlider = (props: IRoundClockProps) => {
             setKnot={refreshKnot}
             animateOnClick={animateOnClick}
             animationDuration={animationDuration}
-            left={left}
-            top={top}
+            anchor={anchor}
             pathBgColor={pathBgColor}
             pathBorderColor={pathBorderColor}
           />

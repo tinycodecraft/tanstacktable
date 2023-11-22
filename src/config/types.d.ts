@@ -489,3 +489,8 @@ export interface IClockInstance extends IData,IClockCore {
   top: number,
   disabled: boolean
 }
+
+export interface IAnchorProps {
+  top: number
+  left: number
+}
