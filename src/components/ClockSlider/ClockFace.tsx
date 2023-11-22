@@ -1,4 +1,4 @@
-import React, { MouseEventHandler, useEffect, useRef, useState } from 'react'
+import React, {  useEffect, useRef, useState } from 'react'
 import { ClockPart } from './model/ClockPart'
 import { KnotPart } from './model/KnotPart'
 import { IAnimationResult, animate, newId } from 'mz-math'
@@ -6,6 +6,7 @@ import { IKnotInstance } from 'src/config/types'
 import { getAnimationProgressAngle, getMouseInAngle } from 'src/config/geometries'
 import { RNDCLK_DF_ANIMATION_DURATION, RNDCLK_DF_PATH_BG_COLOR, RNDCLK_DF_PATH_BORDER_COLOR } from 'src/config/constants'
 import { valueOr } from 'src/config/methods'
+import { InnerFace } from './InnerFace'
 
 interface IClockFaceProps {
   clockPart: ClockPart
@@ -14,19 +15,20 @@ interface IClockFaceProps {
   animationDuration?: number
   pathBorderColor?: string
   pathBgColor?: string
+  pathInnerBgColor?: string
   setKnot: (knot: IKnotInstance, newAngleDeg: number) => void
   left?: number
   top?: number
 }
 
 export const ClockFace = (props: IClockFaceProps) => {
-  const { clockPart, knotPart, setKnot, animateOnClick, animationDuration, top, left, pathBgColor, pathBorderColor } = props
+  const { clockPart, knotPart, setKnot, animateOnClick, animationDuration, top, left, pathBgColor, pathBorderColor, pathInnerBgColor } = props
   const [animation, setAnimation] = useState<IAnimationResult | null>(null)
   const [maskId] = useState(newId())
   const animationClosestPointer = useRef<IKnotInstance | null>(null)
   const animationSourceDegrees = useRef(0)
   const animationTargetDegrees = useRef(0)
-  const stroke = clockPart.stroke
+  const {strokeDasharray, strokeOffset} = clockPart.stroke
   const [cx, cy, radius] = clockPart.clockCoordinates
 
   const onClick = (evt: React.MouseEvent<SVGAElement, MouseEvent>) => {
@@ -80,10 +82,12 @@ export const ClockFace = (props: IClockFaceProps) => {
 
   return (
     <g onClick={onClick}>
+      {pathInnerBgColor && <InnerFace maskId={maskId} clockPart={clockPart} pathInnerBgColor={pathInnerBgColor} />}
+
       {clockPart.border > 0 && (
         <circle
-          strokeDasharray={stroke.strokeDasharray}
-          strokeDashoffset={stroke.strokeOffset}
+          strokeDasharray={strokeDasharray}
+          strokeDashoffset={strokeOffset}
           cx={cx}
           cy={cy}
           r={radius}
@@ -98,8 +102,8 @@ export const ClockFace = (props: IClockFaceProps) => {
         />
       )}
       <circle
-        strokeDasharray={stroke.strokeDasharray}
-        strokeDashoffset={stroke.strokeOffset}
+        strokeDasharray={strokeDasharray}
+        strokeDashoffset={strokeOffset}
         cx={cx}
         cy={cy}
         r={radius}
