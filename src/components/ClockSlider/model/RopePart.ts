@@ -1,13 +1,13 @@
 import { IClockCore, IKnotInstance, IRopeInstance, IStrokeProps } from 'src/config/types'
-import { BasePart } from './BasePart'
+
 import { getAnglesInDiff } from 'src/config/geometries'
 
 
-export class RopePart extends BasePart {
+export class RopePart  {
   _i: IRopeInstance
   _s: IStrokeProps
   constructor(rope: IClockCore, knots: IKnotInstance[]) {
-    super('RopePart')
+    
     this._i = { ...rope, knots }
     // save clock-core path angles
     const pathStartAngle = this._i.startAngleDeg

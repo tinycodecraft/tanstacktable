@@ -1,6 +1,7 @@
 import { IAnimationResult, Vector2, Vector3, circleMovement, convertRange, degreesToRadians, mod, radiansToDegrees, setDecimalPlaces, v2Distance, v2Sub } from 'mz-math'
-import { IKnotCore } from './types'
+import { IKnotCore, IKnotInstance, IKnotProps, IStrokeProps } from './types'
 import { valueOr } from './methods'
+import { ClockPart } from 'src/components/ClockSlider/model/ClockPart';
 
   // that return mouse drag nearest angle if the drag exceeds the arc itself
   const getClosestEdge=(startAngle:number, endAngle:number, currentDegree:number, clockCoordinates: Vector3) : number =>{
@@ -20,6 +21,23 @@ import { valueOr } from './methods'
     return distance1 <= distance2 ? startAngle : endAngle;
   }
 
+  const getKnotsProps=(clockpart: ClockPart, newKnots: IKnotInstance[]): IKnotProps[] => {
+    const updatedKnotProps: IKnotProps[] = newKnots.map((knot) => {
+      const valForKnot = clockpart.angle2value(knot.angleDeg)
+      return {
+        radius: knot.radius,
+        value: valForKnot,
+        bgColor: knot.bgColor,
+        bgColorSelected: knot.bgColorSelected,
+        bgColorDisabled: knot.bgColorDisabled,
+        border: knot.border,
+        borderColor: knot.borderColor,
+        disabled: knot.disabled,
+        ariaLabel: knot.ariaLabel,
+      }
+    })
+    return updatedKnotProps
+  }
 
 const getClockCenter = (circleRadius: number, maxPointerRadius: number, circleThickness: number, circleBorder: number): Vector2 => {
   const size = getClockSize(circleRadius, maxPointerRadius, circleThickness, circleBorder)
@@ -53,6 +71,17 @@ const getMouseInAngle = (anchor: Vector2, mousePos: Vector2, clockCoordinates: V
     angleRad += 2 * Math.PI
   }
   return radiansToDegrees(angleRad)
+}
+const createStroke=(startDeg: number, endDeg: number, radius: number): IStrokeProps =>{
+  const circumference = 2 * Math.PI * radius
+  const angleDiff = endDeg - startDeg
+  const strokeOffset = -(startDeg / 360) * circumference
+  const strokeDasharray = (angleDiff / 360) * circumference
+  const complement = circumference - strokeDasharray
+  return {
+    strokeDasharray: [strokeDasharray, complement].join(' '),
+    strokeOffset,
+  }
 }
 
 const getAnglesInDiff = (startAngle: number, endAngle: number): number => {
@@ -116,4 +145,4 @@ const getAnimationProgressAngle = (
     return mod(animationSourceDegrees - (percent * counterclockwiseDistance) / 100, 360)
   }
 }
-export { checkAngleInArc, getAnimationProgressAngle, getClosestEdge,getClockCenter, getMouseInAngle, getSteppedAngle, getAnglesInDiff, getMaxRadius }
+export { getKnotsProps,createStroke,checkAngleInArc, getAnimationProgressAngle, getClosestEdge,getClockCenter, getMouseInAngle, getSteppedAngle, getAnglesInDiff, getMaxRadius }

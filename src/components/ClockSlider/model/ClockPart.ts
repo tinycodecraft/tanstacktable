@@ -1,7 +1,7 @@
 import { IClockCore, IClockInstance, IData, IStrokeProps } from 'src/config/types'
-import { BasePart } from './BasePart'
+
 import { valueOr } from 'src/config/methods'
-import { getClockCenter } from 'src/config/geometries'
+import { createStroke, getClockCenter } from 'src/config/geometries'
 import {
   RNDCLK_DF_ARROW_STEP,
   RNDCLK_DF_KNOT_RADIUS,
@@ -17,7 +17,7 @@ import {
 } from 'src/config/constants'
 import { Vector3, convertRange, mod, setDecimalPlaces } from 'mz-math'
 
-export class ClockPart extends BasePart {
+export class ClockPart  {
   _i: IClockInstance
   _stroke: IStrokeProps
 
@@ -29,7 +29,7 @@ export class ClockPart extends BasePart {
     top: number,
     left: number,
   ) {
-    super('ClockPart')
+    
 
     let min = valueOr(clockInfo.min, RNDCLK_DF_MIN)
     let max = valueOr(clockInfo.max, RNDCLK_DF_MAX)
@@ -87,7 +87,7 @@ export class ClockPart extends BasePart {
       top,
     }
 
-    this._stroke = ClockPart.createStroke(startAngleDeg, endAngleDeg, radius)
+    this._stroke = createStroke(startAngleDeg, endAngleDeg, radius)
   }
   public angle2value(angle: number): string | number {
     if (this._i.endAngleDeg < this._i.startAngleDeg) {

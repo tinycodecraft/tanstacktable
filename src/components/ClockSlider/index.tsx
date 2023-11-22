@@ -1,15 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { IAnchorProps, IClockInstance, IData, IKnotInstance, IRoundClockProps } from 'src/config/types'
+import { IAnchorProps, IData, IKnotInstance, IRoundClockProps } from 'src/config/types'
 import { ClockPart } from './model/ClockPart'
 import { KnotPart } from './model/KnotPart'
-import { isAngleBetween, isNumber, mod } from 'mz-math'
+import { mod } from 'mz-math'
 import { RNDCLK_DF_KNOT_BORDER, RNDCLK_DF_KNOT_RADIUS, RNDCLK_DF_MAX, RNDCLK_DF_MIN, OUTLINENONE_CSS } from 'src/config/constants'
 import { numberOr } from 'src/config/methods'
-import { checkAngleInArc, getClosestEdge, getMaxRadius, getSteppedAngle } from 'src/config/geometries'
-import { BasePart } from './model/BasePart'
+import { checkAngleInArc, getClosestEdge, getKnotsProps, getMaxRadius, getSteppedAngle } from 'src/config/geometries'
 import { ClockFace } from './ClockFace'
-
-
 
 export const ClockSlider = (props: IRoundClockProps) => {
   const [data, setData] = useState<IData | null>(null)
@@ -43,7 +40,7 @@ export const ClockSlider = (props: IRoundClockProps) => {
 
   useEffect(() => {
     const { top, left } = anchor
-    const myclockPart = ClockPart.getClockPart(
+    const myclockPart = new ClockPart(
       {
         min: numberOr(props.min, RNDCLK_DF_MIN),
         max: numberOr(props.max, RNDCLK_DF_MAX),
@@ -73,7 +70,7 @@ export const ClockSlider = (props: IRoundClockProps) => {
 
   useEffect(() => {
     if (clockPart !== null) {
-      const myknotPart = KnotPart.getKnotPart(clockPart, props.knots || [], props)
+      const myknotPart = new KnotPart(clockPart, props.knots || [], props)
       setKnotPart(myknotPart)
     }
   }, [
@@ -197,7 +194,7 @@ export const ClockSlider = (props: IRoundClockProps) => {
         itKnots.knots = newKnots
         setKnotPart(knotPart)
         if (typeof props.onChange === 'function') {
-          const newKnotProps = KnotPart.getKnotsProps(itClock, newKnots)
+          const newKnotProps = getKnotsProps(itClock, newKnots)
           props.onChange(newKnotProps)
         }
       }

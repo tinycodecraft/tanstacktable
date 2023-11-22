@@ -1,6 +1,5 @@
 /* eslint-disable camelcase */
 import { IKnotBagInstance, IKnotInstance, IKnotProps, IKnotTemplateProps } from 'src/config/types'
-import { BasePart } from './BasePart'
 import { ClockPart } from './ClockPart'
 import { Vector2, Vector3, circleMovement, convertRange, degreesToRadians, mod, v2Distance } from 'mz-math'
 import { noEmptyOr, valueOr } from 'src/config/methods'
@@ -14,10 +13,10 @@ import {
 } from 'src/config/constants'
 import { getSteppedAngle } from 'src/config/geometries'
 
-export class KnotPart extends BasePart {
+export class KnotPart  {
   _i: IKnotBagInstance
   constructor(clock: ClockPart, knots: IKnotProps[], knotTemplate: IKnotTemplateProps) {
-    super('KnotBag')
+    
     const knotvalues: IKnotInstance[] = []
     const angle = mod(clock.angleStart, 360)
     const radius = valueOr(knotTemplate.knotRadius, RNDCLK_DF_KNOT_RADIUS)
