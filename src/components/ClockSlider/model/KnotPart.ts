@@ -118,6 +118,7 @@ export class KnotPart extends BasePart {
   public getAdjacentKnotInfo(index: number,clockAngleInfo: Vector2, isclosed: boolean) : Vector3 {
 
     const length = this._i.knots.length;
+    const [startAngleDeg, endAngleDeg] = clockAngleInfo
     if(isclosed)
     {
       
@@ -129,15 +130,15 @@ export class KnotPart extends BasePart {
     }
     else{
 
-      const prevAngle = index ===0 ?  clockAngleInfo[0]:   this._i.knots[index-1].angleDeg;
-      const nextAngle = index === this._i.knots.length-1 ? clockAngleInfo[1]: this._i.knots[index+1].angleDeg;
+      const prevAngle = index ===0 ?  startAngleDeg:   this._i.knots[index-1].angleDeg;
+      const nextAngle = index === this._i.knots.length-1 ? endAngleDeg: this._i.knots[index+1].angleDeg;
       return [length, prevAngle,nextAngle]
     }
 
   }
 
 
-  public getNewKnots(knotIndex: number, newAngleDeg: number): IKnotInstance[] {
+  public getNewKnots(knotIndex: number, newAngleDeg: number): IKnotInstance[]|null {
       const changed = this._i.knots[knotIndex].angleDeg !== newAngleDeg
       if(changed)
       {
@@ -148,7 +149,7 @@ export class KnotPart extends BasePart {
         return newKnots
 
       }
-      return [...this._i.knots]
+      return null
   }
 
   public set knots(newKnots: IKnotInstance[]) {

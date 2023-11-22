@@ -9,6 +9,7 @@ import { valueOr } from 'src/config/methods'
 import { InnerFace } from './InnerFace'
 
 interface IClockFaceProps {
+  disabled?:boolean
   clockPart: ClockPart
   knotPart: KnotPart
   animateOnClick?: boolean
@@ -16,13 +17,13 @@ interface IClockFaceProps {
   pathBorderColor?: string
   pathBgColor?: string
   pathInnerBgColor?: string
-  setKnot: (knot: IKnotInstance, newAngleDeg: number) => void
+  setKnot: (itClock:ClockPart,itKnots:KnotPart,knot: IKnotInstance, newAngleDeg: number,isdisabled?:boolean) => void
   left?: number
   top?: number
 }
 
 export const ClockFace = (props: IClockFaceProps) => {
-  const { clockPart, knotPart, setKnot, animateOnClick, animationDuration, top, left, pathBgColor, pathBorderColor, pathInnerBgColor } = props
+  const { disabled,clockPart, knotPart, setKnot, animateOnClick, animationDuration, top, left, pathBgColor, pathBorderColor, pathInnerBgColor } = props
   const [animation, setAnimation] = useState<IAnimationResult | null>(null)
   const [maskId] = useState(newId())
   const animationClosestPointer = useRef<IKnotInstance | null>(null)
@@ -46,7 +47,7 @@ export const ClockFace = (props: IClockFaceProps) => {
       animationTargetDegrees.current = degrees
       animation?.start()
     } else {
-      setKnot(closestPointer, degrees)
+      setKnot(clockPart,knotPart,closestPointer, degrees,disabled)
     }
   }
   useEffect(
@@ -69,7 +70,7 @@ export const ClockFace = (props: IClockFaceProps) => {
             animationTargetDegrees.current,
             clockPart.angleStart,
           )
-          if (currentDegrees) setKnot(animationClosestPointer.current, currentDegrees)
+          if (currentDegrees) setKnot(clockPart,knotPart,animationClosestPointer.current, currentDegrees,disabled)
         },
         duration: valueOr(animationDuration, RNDCLK_DF_ANIMATION_DURATION),
       })

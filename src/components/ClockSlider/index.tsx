@@ -13,7 +13,7 @@ export const ClockSlider = (props: IRoundClockProps) => {
   const [data, setData] = useState<IData | null>(null)
 
   const [clockPart, setClockPart] = useState<ClockPart | null>(null)
-  const [knotPart, setKnotPart] = useState<KnotPart | null>(null)  
+  const [knotPart, setKnotPart] = useState<KnotPart | null>(null)
   const [selectedPointerId, setSelectedPointerId] = useState('')
   const { animateOnClick, animationDuration, pathBgColor, pathBorderColor } = props
 
@@ -67,10 +67,9 @@ export const ClockSlider = (props: IRoundClockProps) => {
   }, [data, props, left, top])
 
   useEffect(() => {
-    if (clockPart) {
+    if (clockPart !== null) {
       const myknotPart = KnotPart.getKnotPart(clockPart, props.knots || [], props)
       setKnotPart(myknotPart)
-      
     }
   }, [
     props.knotRadius,
@@ -105,100 +104,101 @@ export const ClockSlider = (props: IRoundClockProps) => {
     }
   }
 
-  const refreshKnot = (knot: IKnotInstance, newAngleDeg: number): void => {
-    if (props.disabled || !knotPart || !knotPart.knots || knot.disabled || !clockPart) return
-    newAngleDeg = getSteppedAngle(newAngleDeg, clockPart.stepAngle, clockPart.angleStart, clockPart.angleEnd)
-    if (clockPart.isClosed && mod(newAngleDeg, 360) === mod(clockPart.angleEnd, 360)) {
-      newAngleDeg = clockPart.angleStart
-    }
-    if (knot.angleDeg === newAngleDeg) {
-      // please update (actually no update)
-      focusKnot(knot.id, svgRef.current)
-      return
-    }
-    const handleOverlap = !props.knotsOverlap // if not allow overlap => do following
+  const refreshKnot = (itClock: ClockPart, itKnots: KnotPart, knot: IKnotInstance, newAngleDeg: number, isdisabled?: boolean): void => {
+    if (!isdisabled && itClock !== null && knotPart !== null && knot !== null && !knot.disabled) {
+      newAngleDeg = getSteppedAngle(newAngleDeg, itClock.stepAngle, itClock.angleStart, itClock.angleEnd)
+      if (itClock.isClosed && mod(newAngleDeg, 360) === mod(itClock.angleEnd, 360)) {
+        newAngleDeg = itClock.angleStart
+      }
+      if (knot.angleDeg === newAngleDeg) {
+        // please update (actually no update)
+        // focus has setpointer-id
+        focusKnot(knot.id, svgRef.current)
+        return
+      }
+      const handleOverlap = !props.knotsOverlap // if not allow overlap => do following
 
-    if (handleOverlap) {
-      // eslint-disable-next-line prefer-const
-      let [length, prevAngle, nextAngle] = knotPart.getAdjacentKnotInfo(knot.index, [clockPart.angleStart, clockPart.angleEnd], clockPart.isClosed)
+      if (handleOverlap) {
+        // eslint-disable-next-line prefer-const
+        let [length, prevAngle, nextAngle] = knotPart.getAdjacentKnotInfo(knot.index, [itClock.angleStart, itClock.angleEnd], itClock.isClosed)
 
-      if (length === 2 && prevAngle === nextAngle) {
-        const splitPointDeg = prevAngle
-        if (prevAngleDegRef.current === null) {
-          prevAngleDegRef.current = newAngleDeg
-        } else {
-          // Clockwise: new angle in (splitPointDeg, splitPointDeg + 90]
-          // Clockwise: prev angle in [splitPointDeg - 90, splitPointDeg)
-          // CounterClockwise: new angle in [splitPointDeg - 90, splitPointDeg)
-          // CounterClockwise: prev angle in (splitPointDeg, splitPointDeg + 90]
-          const SAFE_ANGLE = 150
-
-          let t1 = splitPointDeg - SAFE_ANGLE
-          let t2 = splitPointDeg - 0.001
-
-          if (t1 < 0) t1 += 360
-          if (t2 < 0) t2 += 360
-
-          const clockwiseNew = checkAngleInArc(splitPointDeg + 0.001, splitPointDeg + SAFE_ANGLE, newAngleDeg)
-          const clockwisePrev = checkAngleInArc(t1, t2, prevAngleDegRef.current)
-          const clockwise = clockwiseNew && clockwisePrev
-
-          let t3 = splitPointDeg - SAFE_ANGLE
-          let t4 = splitPointDeg - 0.001
-
-          if (t3 < 0) t3 += 360
-          if (t4 < 0) t4 += 360
-
-          const counterClockwiseNew = checkAngleInArc(t3, t4, newAngleDeg)
-          const counterClockwisePrev = checkAngleInArc(splitPointDeg + 0.001, splitPointDeg + SAFE_ANGLE, prevAngleDegRef.current)
-          const counterClockwise = counterClockwiseNew && counterClockwisePrev
-
-          if (clockwise || counterClockwise) {
-            const newKnots = knotPart.getNewKnots(knot.index, splitPointDeg)
-            knotPart.knots = newKnots
-            setKnotPart(knotPart)
-            if (props.onChange) {
-              const newKnotProps = KnotPart.getKnotsProps(clockPart, newKnots)
-              props.onChange(newKnotProps)
-            }
-            setSelectedPointerId(knot.id)
-            focusKnot(knot.id, svgRef.current)
-
-            // please update (actually no update)
-            return
-          }
-
-          if (newAngleDeg !== splitPointDeg) {
+        if (length === 2 && prevAngle === nextAngle) {
+          const splitPointDeg = prevAngle
+          if (prevAngleDegRef.current === null) {
             prevAngleDegRef.current = newAngleDeg
+          } else {
+            // Clockwise: new angle in (splitPointDeg, splitPointDeg + 90]
+            // Clockwise: prev angle in [splitPointDeg - 90, splitPointDeg)
+            // CounterClockwise: new angle in [splitPointDeg - 90, splitPointDeg)
+            // CounterClockwise: prev angle in (splitPointDeg, splitPointDeg + 90]
+            const SAFE_ANGLE = 150
+
+            let t1 = splitPointDeg - SAFE_ANGLE
+            let t2 = splitPointDeg - 0.001
+
+            if (t1 < 0) t1 += 360
+            if (t2 < 0) t2 += 360
+
+            const clockwiseNew = checkAngleInArc(splitPointDeg + 0.001, splitPointDeg + SAFE_ANGLE, newAngleDeg)
+            const clockwisePrev = checkAngleInArc(t1, t2, prevAngleDegRef.current)
+            const clockwise = clockwiseNew && clockwisePrev
+
+            let t3 = splitPointDeg - SAFE_ANGLE
+            let t4 = splitPointDeg - 0.001
+
+            if (t3 < 0) t3 += 360
+            if (t4 < 0) t4 += 360
+
+            const counterClockwiseNew = checkAngleInArc(t3, t4, newAngleDeg)
+            const counterClockwisePrev = checkAngleInArc(splitPointDeg + 0.001, splitPointDeg + SAFE_ANGLE, prevAngleDegRef.current)
+            const counterClockwise = counterClockwiseNew && counterClockwisePrev
+
+            if (clockwise || counterClockwise) {
+              renewKnots(itKnots, itClock, knot, splitPointDeg)
+
+              // please update (actually no update)
+              return
+            }
+
+            if (newAngleDeg !== splitPointDeg) {
+              prevAngleDegRef.current = newAngleDeg
+            }
           }
         }
-      }
 
-      if (nextAngle <= prevAngle) {
-        nextAngle += 360
-      } else {
-        if (mod(prevAngle, 360) <= mod(nextAngle, 360)) {
-          prevAngle = mod(prevAngle, 360)
-          nextAngle = mod(nextAngle, 360)
+        if (nextAngle <= prevAngle) {
+          nextAngle += 360
+        } else {
+          if (mod(prevAngle, 360) <= mod(nextAngle, 360)) {
+            prevAngle = mod(prevAngle, 360)
+            nextAngle = mod(nextAngle, 360)
+          }
+        }
+
+        if (!checkAngleInArc(prevAngle, nextAngle, newAngleDeg)) {
+          newAngleDeg = getClosestEdge(prevAngle, nextAngle, newAngleDeg, itClock.clockCoordinates)
         }
       }
 
-      if (!checkAngleInArc(prevAngle, nextAngle, newAngleDeg)) {
-        newAngleDeg = getClosestEdge(prevAngle, nextAngle, newAngleDeg, clockPart.clockCoordinates)
+      renewKnots(itKnots, itClock, knot, newAngleDeg)
+      // please update ( actually no update)
+    }
+  }
+
+  const renewKnots = (itKnots: KnotPart, itClock: ClockPart, knot: IKnotInstance, newAngleDeg: number) => {
+    if (itKnots !== null && itClock !== null) {
+      const newKnots = itKnots.getNewKnots(knot.index, newAngleDeg)
+      if (newKnots !== null) {
+        itKnots.knots = newKnots
+        setKnotPart(knotPart)
+        if (typeof props.onChange === 'function') {
+          const newKnotProps = KnotPart.getKnotsProps(itClock, newKnots)
+          props.onChange(newKnotProps)
+        }
       }
-    }
 
-    const newKnots = knotPart.getNewKnots(knot.index, newAngleDeg)
-    knotPart.knots = newKnots
-    setKnotPart(knotPart)
-    if (props.onChange) {
-      const newKnotProps = KnotPart.getKnotsProps(clockPart, newKnots)
-      props.onChange(newKnotProps)
+      focusKnot(knot.id, svgRef.current)
     }
-    setSelectedPointerId(knot.id)
-    focusKnot(knot.id, svgRef.current)
-
-    // please update ( actually no update)
   }
 
   return (
@@ -220,6 +220,7 @@ export const ClockSlider = (props: IRoundClockProps) => {
           <ClockFace
             clockPart={clockPart}
             knotPart={knotPart}
+            disabled={props.disabled}
             setKnot={refreshKnot}
             animateOnClick={animateOnClick}
             animationDuration={animationDuration}
