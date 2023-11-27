@@ -33,6 +33,7 @@ export const ClockFace = (props: IClockFaceProps) => {
   const [cx, cy, radius] = clockPart.clockCoordinates
 
   const onClick = (evt: React.MouseEvent<SVGAElement, MouseEvent>) => {
+    console.log(` top value is ${top}, left value is ${left}`)
     if (!clockPart || clockPart.disabled || (animation && animation.isAnimating()) || !top || !left) return
 
     const degrees = getMouseInAngle([left, top], [evt.clientX, evt.clientY], clockPart.clockCoordinates)

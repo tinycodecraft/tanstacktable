@@ -6,6 +6,7 @@ import { PeopleTableProvider } from './tx/PeopleContext'
 import { PersonGroupTable } from './components/PersonGroupTable'
 import { Tabs, Text } from '@mantine/core'
 import { IKnotProps } from './config/types'
+import { ClockSlider } from './components/ClockSlider'
 // import { CharacterProvider } from "./tx/CharacterContext";
 // import { CharacterMoreTable } from "./components/CharacterMoreTable";
 
@@ -56,6 +57,10 @@ function App() {
           </Tabs.Panel>
           <Tabs.Panel value='slider'>
             <Text color='red' >This is a good slider</Text>
+            <ClockSlider 
+              knots={knots}
+              onChange={setKnots}
+            />
           </Tabs.Panel>
         </Tabs>
       </div>

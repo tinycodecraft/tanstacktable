@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { IAnchorProps, IData, IKnotInstance, IRoundClockProps } from 'src/config/types'
 import { ClockPart } from './model/ClockPart'
 import { KnotPart } from './model/KnotPart'
@@ -15,12 +15,23 @@ export const ClockSlider = (props: IRoundClockProps) => {
   const [knotPart, setKnotPart] = useState<KnotPart | null>(null)
   const [selectedPointerId, setSelectedPointerId] = useState('')
   const { animateOnClick, animationDuration, pathBgColor, pathBorderColor } = props
-
+  const svgRef = useRef<SVGSVGElement|null>(null)
   const prevAngleDegRef = useRef<number | null>(null)
-  const svgRef = useRef<SVGSVGElement>(null)
-  const [anchor, setAnchor] = useState<IAnchorProps>(!svgRef || !svgRef.current ? { left: 0, top: 0 } : svgRef.current.getBoundingClientRect())
+  
+  const [anchor, setAnchor] = useState<IAnchorProps>( { left: 0, top: 0 } )
+
+  const measuredRef = useCallback((node: SVGSVGElement)=> {
+    if(node!=null)
+    {
+      setAnchor(node.getBoundingClientRect())
+      svgRef.current = node;
+      console.log(`the anchor svg is detected!`)
+    }
+
+  },[]);
 
   useEffect(() => {
+
     const clearSelectedPointer = (evt: MouseEvent) => {
       const $target = evt.target as HTMLElement
       const $pointer = $target.closest('[data-type="pointer"]')
@@ -28,18 +39,16 @@ export const ClockSlider = (props: IRoundClockProps) => {
 
       setSelectedPointerId('')
     }
-    if (svgRef && svgRef.current) {
-      setAnchor(svgRef.current.getBoundingClientRect())
-    }
     document.addEventListener('mousedown', clearSelectedPointer)
 
     return () => {
       document.removeEventListener('mousedown', clearSelectedPointer)
     }
-  }, [svgRef])
+  }, [anchor])
 
   useEffect(() => {
     const { top, left } = anchor
+    console.log(`creating clock part with top: ${top},left: ${left}`)
     const myclockPart = new ClockPart(
       {
         min: numberOr(props.min, RNDCLK_DF_MIN),
@@ -66,13 +75,16 @@ export const ClockSlider = (props: IRoundClockProps) => {
     if (haschanged) {
       setData(myclockPart.data)
     }
-  }, [data, props, anchor])
+  }, [data, props,anchor])
 
   useEffect(() => {
     if (clockPart !== null) {
+      console.log(`try to create the knotpart`)
       const myknotPart = new KnotPart(clockPart, props.knots || [], props)
       setKnotPart(myknotPart)
     }
+
+
   }, [
     props.knotRadius,
     props.pathBgColor,
@@ -92,7 +104,9 @@ export const ClockSlider = (props: IRoundClockProps) => {
     props.disabled,
     props.pathStartAngle,
     props.pathEndAngle,
+    clockPart,
     data,
+
   ])
 
   const focusKnot = (id: string, svgElement: SVGSVGElement | null) => {
@@ -207,7 +221,7 @@ export const ClockSlider = (props: IRoundClockProps) => {
     <>
       {clockPart && knotPart && (
         <svg
-          ref={svgRef}
+          ref={measuredRef}
           xmlns='http://www.w3.org/2000/svg'
           width={clockPart.size}
           height={clockPart.size}
