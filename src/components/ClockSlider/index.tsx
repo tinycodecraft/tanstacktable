@@ -206,7 +206,7 @@ export const ClockSlider = (props: IRoundClockProps) => {
       const newKnots = itKnots.getNewKnots(knot.index, newAngleDeg)
       if (newKnots !== null) {
         itKnots.knots = newKnots
-        setKnotPart(knotPart)
+        setKnotPart(itKnots)
         if (typeof props.onChange === 'function') {
           const newKnotProps = getKnotsProps(itClock, newKnots)
           props.onChange(newKnotProps)
