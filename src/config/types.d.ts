@@ -356,6 +356,94 @@ export interface IRoundClockProps extends IKnotTemplateProps {
   // This determines the speed at which the animation is performed.
   // The default value is 200 ms.
   animationDuration?: number
+
+
+
+
+
+}
+
+export interface ITicksProps {
+
+  // A number specifying the total count of ticks
+  // to be displayed on the slider.
+  // This determines the number of evenly spaced ticks
+  // along the slider's circumference.
+  ticksCount?: number  
+
+  // A boolean value indicating whether to enable
+  // the display of ticks (marks) on the slider.
+  // If set to true, the ticks will be visible.
+  // The default value is false.
+  enableTicks?: boolean
+
+  // A number specifying the width of the ticks.
+  // The default value is 3.
+  ticksWidth?: number
+
+  // A number specifying the height of the regular ticks.
+  // The default value is 10.
+  ticksHeight?: number
+
+  // A number specifying the height of the longer ticks.
+  // This determines the vertical size of the longer tick marks,
+  // which are typically used to highlight specific values.
+  // The default value is ticksHeight * 2.
+  longerTicksHeight?: number
+
+  // A number specifying the distance
+  // between the ticks and the slider panel.
+  // This determines the gap or margin between the ticks
+  // and the circular slider track.
+  // The default value is 0.
+  ticksDistanceToPanel?: number  
+
+  // A number specifying the distance
+  // between the tick values and the slider.
+  // This determines the gap or margin
+  // between the tick labels and the circular slider track.
+  // The default value is 15.
+  tickValuesDistance?: number
+
+  // A string specifying the color of the ticks.
+  // This color is applied to the tick marks.
+  // The default value is #efefef.
+  ticksColor?: string  
+
+  // A string specifying the color of the tick values.
+  // This color is applied to the text of the tick labels.
+  // The default value is #000.
+  tickValuesColor?: string
+
+  // A number specifying the font size of the tick values.
+  // This determines the size of the text used for the tick labels.
+  // The default value is 12.
+  tickValuesFontSize?: number
+
+  // A number specifying the number of ticks to group together.
+  // This can be used to create intervals
+  // or larger divisions between ticks.
+  // For example, if set to 2, every second tick will be a larger tick.
+  // The default value is 10.
+  ticksGroupSize?: number  
+
+  // A boolean value indicating
+  // whether to show tick values only for longer ticks.
+  // If set to true, the tick values will be displayed
+  // only for the longer tick marks.
+  // This is useful for displaying labels on selected or significant ticks.
+  // The default value is true.
+  longerTickValuesOnly?: boolean    
+
+  // tick values -----------
+  // A boolean value indicating
+  // whether to show the tick values (labels) on the slider.
+  // If set to true, the tick values will be displayed.
+  // The default value is true.
+  showTickValues?: boolean
+
+
+
 }
 
 export interface IKnotCore {
@@ -367,6 +455,7 @@ export interface IKnotCore {
   border?: number
 
 }
+
 
 export interface IKnotProps extends IKnotCore {
 
