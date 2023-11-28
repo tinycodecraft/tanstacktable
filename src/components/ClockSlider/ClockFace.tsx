@@ -1,4 +1,4 @@
-import React, {  useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { ClockPart } from './model/ClockPart'
 import { KnotPart } from './model/KnotPart'
 import { IAnimationResult, animate, newId } from 'mz-math'
@@ -9,7 +9,7 @@ import { valueOr } from 'src/config/methods'
 import { InnerFace } from './InnerFace'
 
 interface IClockFaceProps {
-  disabled?:boolean
+  disabled?: boolean
   clockPart: ClockPart
   knotPart: KnotPart
   animateOnClick?: boolean
@@ -17,40 +17,53 @@ interface IClockFaceProps {
   pathBorderColor?: string
   pathBgColor?: string
   pathInnerBgColor?: string
-  setKnot: (itClock:ClockPart,itKnots:KnotPart,knot: IKnotInstance, newAngleDeg: number,isdisabled?:boolean) => void
+  setKnot: (itClock: ClockPart, itKnots: KnotPart, knot: IKnotInstance, newAngleDeg: number, isdisabled?: boolean) => void
   anchor: IAnchorProps
-
 }
 
 export const ClockFace = (props: IClockFaceProps) => {
-  const { disabled,clockPart, knotPart, setKnot, animateOnClick, animationDuration, anchor: { top, left}, pathBgColor, pathBorderColor, pathInnerBgColor } = props
+  const {
+    disabled,
+    clockPart,
+    knotPart,
+    setKnot,
+    animateOnClick,
+    animationDuration,
+    anchor: { top, left },
+    pathBgColor,
+    pathBorderColor,
+    pathInnerBgColor,
+  } = props
   const [animation, setAnimation] = useState<IAnimationResult | null>(null)
   const [maskId] = useState(newId())
-  const animationClosestPointer = useRef<IKnotInstance | null>(null)
+  const animationClosestKnot = useRef<IKnotInstance | null>(null)
   const animationSourceDegrees = useRef(0)
   const animationTargetDegrees = useRef(0)
-  const {strokeDasharray, strokeOffset} = clockPart.stroke
+  const { strokeDasharray, strokeOffset } = clockPart.stroke
   const [cx, cy, radius] = clockPart.clockCoordinates
 
-  const onClick = (evt: React.MouseEvent<SVGAElement, MouseEvent>) => {
-    console.log(` top value is ${top}, left value is ${left}`)
-    if (!clockPart || clockPart.disabled || (animation && animation.isAnimating()) || !top || !left) return
+  const onClick = useCallback(
+    (evt: React.MouseEvent<SVGAElement, MouseEvent>) => {
+      console.log(` top value is ${top}, left value is ${left}`)
+      if (!clockPart || clockPart.disabled || (animation && animation.isAnimating()) || !top || !left) return
 
-    const degrees = getMouseInAngle([left, top], [evt.clientX, evt.clientY], clockPart.clockCoordinates)
+      const degrees = getMouseInAngle([left, top], [evt.clientX, evt.clientY], clockPart.clockCoordinates)
 
-    const closestPointer = knotPart.getClosestKnot(degrees, clockPart.clockCoordinates)
+      const closestPointer = knotPart.getClosestKnot(degrees, clockPart.clockCoordinates)
 
-    if (!closestPointer) return
+      if (!closestPointer) return
 
-    if (animateOnClick) {
-      animationClosestPointer.current = closestPointer
-      animationSourceDegrees.current = closestPointer.angleDeg
-      animationTargetDegrees.current = degrees
-      animation?.start()
-    } else {
-      setKnot(clockPart,knotPart,closestPointer, degrees,disabled)
-    }
-  }
+      if (animateOnClick) {
+        animationClosestKnot.current = closestPointer
+        animationSourceDegrees.current = closestPointer.angleDeg
+        animationTargetDegrees.current = degrees
+        animation?.start()
+      } else {
+        setKnot(clockPart, knotPart, closestPointer, degrees, disabled)
+      }
+    },
+    [top, left, knotPart, clockPart],
+  )
   useEffect(
     () => {
       if (animation) {
@@ -64,14 +77,14 @@ export const ClockFace = (props: IClockFaceProps) => {
 
       const _animation = animate({
         callback: (progress) => {
-          if (!animationClosestPointer.current) return
+          if (!animationClosestKnot.current) return
           const currentDegrees = getAnimationProgressAngle(
             progress,
             animationSourceDegrees.current,
             animationTargetDegrees.current,
             clockPart.angleStart,
           )
-          if (currentDegrees) setKnot(clockPart,knotPart,animationClosestPointer.current, currentDegrees,disabled)
+          if (currentDegrees) setKnot(clockPart, knotPart, animationClosestKnot.current, currentDegrees, disabled)
         },
         duration: valueOr(animationDuration, RNDCLK_DF_ANIMATION_DURATION),
       })

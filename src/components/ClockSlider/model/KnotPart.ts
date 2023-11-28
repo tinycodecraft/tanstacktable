@@ -136,6 +136,7 @@ export class KnotPart  {
 
   }
 
+  
 
   public getNewKnots(knotIndex: number, newAngleDeg: number): IKnotInstance[]|null {
       const changed = this._i.knots[knotIndex].angleDeg !== newAngleDeg

@@ -1,43 +1,55 @@
-import { IAnimationResult, Vector2, Vector3, circleMovement, convertRange, degreesToRadians, mod, radiansToDegrees, setDecimalPlaces, v2Distance, v2Sub } from 'mz-math'
+import {
+  IAnimationResult,
+  Vector2,
+  Vector3,
+  circleMovement,
+  convertRange,
+  degreesToRadians,
+  mod,
+  radiansToDegrees,
+  setDecimalPlaces,
+  v2Distance,
+  v2Sub,
+} from 'mz-math'
 import { IKnotCore, IKnotInstance, IKnotProps, IStrokeProps } from './types'
 import { valueOr } from './methods'
-import { ClockPart } from 'src/components/ClockSlider/model/ClockPart';
+import { ClockPart } from 'src/components/ClockSlider/model/ClockPart'
+import { RNDCLK_DF_ROPE_BG_COLOR, RNDCLK_DF_ROPE_BG_COLOR_DISABLED } from './constants'
 
-  // that return mouse drag nearest angle if the drag exceeds the arc itself
-  const getClosestEdge=(startAngle:number, endAngle:number, currentDegree:number, clockCoordinates: Vector3) : number =>{
+// that return mouse drag nearest angle if the drag exceeds the arc itself
+const getClosestEdge = (startAngle: number, endAngle: number, currentDegree: number, clockCoordinates: Vector3): number => {
+  const angleRad = convertRange(degreesToRadians(currentDegree), 0, Math.PI * 2, 0, Math.PI) // [0, Math.PI*2] ---> [0, Math.PI]
+  const currentPointOnArc = circleMovement([clockCoordinates[0], clockCoordinates[1]], angleRad, clockCoordinates[2])
 
-    const angleRad = convertRange(degreesToRadians(currentDegree), 0, Math.PI * 2, 0, Math.PI); // [0, Math.PI*2] ---> [0, Math.PI]
-    const currentPointOnArc = circleMovement([ clockCoordinates[0], clockCoordinates[1] ], angleRad, clockCoordinates[2]);
+  const startAngleRad = convertRange(degreesToRadians(startAngle), 0, Math.PI * 2, 0, Math.PI) // [0, Math.PI*2] ---> [0, Math.PI]
+  const startPointOnArc = circleMovement([clockCoordinates[0], clockCoordinates[1]], startAngleRad, clockCoordinates[2])
 
-    const startAngleRad = convertRange(degreesToRadians(startAngle), 0, Math.PI * 2, 0, Math.PI); // [0, Math.PI*2] ---> [0, Math.PI]
-    const startPointOnArc = circleMovement([  clockCoordinates[0], clockCoordinates[1] ], startAngleRad, clockCoordinates[2]);
+  const endAngleRad = convertRange(degreesToRadians(endAngle), 0, Math.PI * 2, 0, Math.PI) // [0, Math.PI*2] ---> [0, Math.PI]
+  const endPointOnArc = circleMovement([clockCoordinates[0], clockCoordinates[1]], endAngleRad, clockCoordinates[2])
 
-    const endAngleRad = convertRange(degreesToRadians(endAngle), 0, Math.PI * 2, 0, Math.PI); // [0, Math.PI*2] ---> [0, Math.PI]
-    const endPointOnArc = circleMovement([  clockCoordinates[0], clockCoordinates[1] ], endAngleRad, clockCoordinates[2]);
+  const distance1 = v2Distance(currentPointOnArc, startPointOnArc)
+  const distance2 = v2Distance(currentPointOnArc, endPointOnArc)
 
-    const distance1 = v2Distance(currentPointOnArc, startPointOnArc);
-    const distance2 = v2Distance(currentPointOnArc, endPointOnArc);
+  return distance1 <= distance2 ? startAngle : endAngle
+}
 
-    return distance1 <= distance2 ? startAngle : endAngle;
-  }
-
-  const getKnotsProps=(clockpart: ClockPart, newKnots: IKnotInstance[]): IKnotProps[] => {
-    const updatedKnotProps: IKnotProps[] = newKnots.map((knot) => {
-      const valForKnot = clockpart.angle2value(knot.angleDeg)
-      return {
-        radius: knot.radius,
-        value: valForKnot,
-        bgColor: knot.bgColor,
-        bgColorSelected: knot.bgColorSelected,
-        bgColorDisabled: knot.bgColorDisabled,
-        border: knot.border,
-        borderColor: knot.borderColor,
-        disabled: knot.disabled,
-        ariaLabel: knot.ariaLabel,
-      }
-    })
-    return updatedKnotProps
-  }
+const getKnotsProps = (clockpart: ClockPart, newKnots: IKnotInstance[]): IKnotProps[] => {
+  const updatedKnotProps: IKnotProps[] = newKnots.map((knot) => {
+    const valForKnot = clockpart.angle2value(knot.angleDeg)
+    return {
+      radius: knot.radius,
+      value: valForKnot,
+      bgColor: knot.bgColor,
+      bgColorSelected: knot.bgColorSelected,
+      bgColorDisabled: knot.bgColorDisabled,
+      border: knot.border,
+      borderColor: knot.borderColor,
+      disabled: knot.disabled,
+      ariaLabel: knot.ariaLabel,
+    }
+  })
+  return updatedKnotProps
+}
 
 const getClockCenter = (circleRadius: number, maxPointerRadius: number, circleThickness: number, circleBorder: number): Vector2 => {
   const size = getClockSize(circleRadius, maxPointerRadius, circleThickness, circleBorder)
@@ -72,7 +84,7 @@ const getMouseInAngle = (anchor: Vector2, mousePos: Vector2, clockCoordinates: V
   }
   return radiansToDegrees(angleRad)
 }
-const createStroke=(startDeg: number, endDeg: number, radius: number): IStrokeProps =>{
+const createStroke = (startDeg: number, endDeg: number, radius: number): IStrokeProps => {
   const circumference = 2 * Math.PI * radius
   const angleDiff = endDeg - startDeg
   const strokeOffset = -(startDeg / 360) * circumference
@@ -105,6 +117,20 @@ const getMaxRadius = (knotCores: IKnotCore[], radiusDefault: number, borderDefau
   return knotCores
     .map((e) => valueOr(e.radius, radiusDefault) + valueOr(e.border, borderDefault) / 2)
     .reduce((prev, cur) => Math.max(prev, cur), -Infinity)
+}
+const getStrokeColor = (
+  disabled: boolean,
+  ropeBgColorDisabled: string,
+  ropeBgColor: string,
+  mouseOvered: boolean,
+  ropeBgColorHover: string,
+): string => {
+  if (disabled) return valueOr(ropeBgColorDisabled, RNDCLK_DF_ROPE_BG_COLOR_DISABLED)
+  const bgColor = valueOr(ropeBgColor, RNDCLK_DF_ROPE_BG_COLOR)
+  if (mouseOvered) {
+    return valueOr(ropeBgColorHover, bgColor)
+  }
+  return bgColor
 }
 
 const getAnimationProgressAngle = (
@@ -145,4 +171,16 @@ const getAnimationProgressAngle = (
     return mod(animationSourceDegrees - (percent * counterclockwiseDistance) / 100, 360)
   }
 }
-export { getKnotsProps,createStroke,checkAngleInArc, getAnimationProgressAngle, getClosestEdge,getClockCenter, getMouseInAngle, getSteppedAngle, getAnglesInDiff, getMaxRadius }
+export {
+  getStrokeColor,
+  getKnotsProps,
+  createStroke,
+  checkAngleInArc,
+  getAnimationProgressAngle,
+  getClosestEdge,
+  getClockCenter,
+  getMouseInAngle,
+  getSteppedAngle,
+  getAnglesInDiff,
+  getMaxRadius,
+}
