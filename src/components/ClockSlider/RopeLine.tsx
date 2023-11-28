@@ -3,10 +3,12 @@ import { ClockPart } from './model/ClockPart'
 import { RopePart } from './model/RopePart'
 import { IKnotInstance } from 'src/config/types'
 import { KnotPart } from './model/KnotPart'
-import { IAnimationResult, mod } from 'mz-math'
-import { RNDCLK_DF_ROPE_BG_COLOR } from 'src/config/constants'
-import { getMouseInAngle, getStrokeColor } from 'src/config/geometries'
+import { IAnimationResult, animate, mod } from 'mz-math'
+import { RNDCLK_DF_ANIMATION_DURATION, RNDCLK_DF_ROPE_BG_COLOR } from 'src/config/constants'
+import { getAnimationProgressAngle, getMouseInAngle, getStrokeColor } from 'src/config/geometries'
+import { valueOr } from 'src/config/methods'
 interface IRopeLineProps {
+  hideRope: boolean
   disabled: boolean
   ropeBgColorDisabled: string
   ropeBgColor: string
@@ -23,6 +25,7 @@ interface IRopeLineProps {
 
 export const RopeLine = (props: IRopeLineProps) => {
   const {
+    hideRope,
     rangeDragging,
     animateOnClick,
     animationDuration,
@@ -44,6 +47,26 @@ export const RopeLine = (props: IRopeLineProps) => {
   const animationClosestKnot = useRef<IKnotInstance | null>(null)
   const animationSourceDegrees = useRef(0)
   const animationTargetDegrees = useRef(0)
+  const [cx, cy, radius] = clockPart.clockCoordinates
+  const stroke = clockPart.stroke
+
+  const onMouseUp = () => {
+    window.removeEventListener('mousemove', onValueChange)
+    window.removeEventListener('mouseup', onValueChange)
+
+    rangeDraggingLastAngle.current = undefined
+  }
+
+  const onMouseDown = (evt: ReactMouseEvent) => {
+    if (!rangeDragging || disabled || knotPart.knots.length <= 1) return
+
+    onValueChange(evt)
+
+    window.addEventListener('mousemove', onValueChange)
+    window.addEventListener('mouseup', onMouseUp)
+  }
+  const onMouseOver = () => setMouseOvered(true)
+  const onMouseOut = () => setMouseOvered(false)
 
   const onValueChange = useCallback(
     (evt: MouseEvent | ReactMouseEvent) => {
@@ -66,7 +89,7 @@ export const RopeLine = (props: IRopeLineProps) => {
   )
 
   const onClick = useCallback(
-    (evt: React.MouseEvent<SVGAElement, MouseEvent>) => {
+    (evt: ReactMouseEvent) => {
       console.log(` top value is ${top}, left value is ${left}`)
       if (!clockPart || clockPart.disabled || (animation && animation.isAnimating()) || !top || !left) return
 
@@ -97,6 +120,63 @@ export const RopeLine = (props: IRopeLineProps) => {
       setRopePart(new RopePart(clockPart.core, knotPart.knots))
     }
   }, [clockPart, knotPart])
+  useEffect(
+    () => {
+      if (animation) {
+        animation.stop()
+      }
 
-  return <div>RopeLine</div>
+      if (!animateOnClick) {
+        setAnimation(null)
+        return
+      }
+
+      const _animation = animate({
+        callback: (progress) => {
+          if (!animationClosestKnot.current) return
+          const currentDegrees = getAnimationProgressAngle(
+            progress,
+            animationSourceDegrees.current,
+            animationTargetDegrees.current,
+            clockPart.angleStart,
+          )
+          if (currentDegrees) setKnot(clockPart, knotPart, animationClosestKnot.current, currentDegrees, disabled)
+        },
+        duration: valueOr(animationDuration, RNDCLK_DF_ANIMATION_DURATION),
+      })
+
+      setAnimation(_animation)
+    },
+    // eslint-disable-next-line
+    [animateOnClick, animationDuration],
+  )
+
+  return (
+    <>
+      {valueOr(hideRope, false) && ropePart && (
+        <circle
+          data-type='connection'
+          className='mz-round-slider-connection'
+          cx={cx}
+          cy={cy}
+          r={radius}
+          strokeDasharray={stroke.strokeDasharray}
+          strokeDashoffset={stroke.strokeOffset}
+          stroke={strokeColor}
+          strokeWidth={clockPart.thickness}
+          fill='none'
+          shapeRendering='geometricPrecision'
+          strokeLinecap='round'
+          cursor={disabled ? 'default' : 'pointer'}
+          onClick={onClick}
+          onMouseDown={onMouseDown}
+          onMouseOver={onMouseOver}
+          onMouseOut={onMouseOut}
+          style={{
+            transition: '0.2s stroke',
+          }}
+        />
+      )}
+    </>
+  )
 }
