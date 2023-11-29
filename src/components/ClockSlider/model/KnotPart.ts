@@ -13,10 +13,10 @@ import {
 } from 'src/config/constants'
 import { getSteppedAngle } from 'src/config/geometries'
 
-export class KnotPart  {
+export class KnotPart {
   _i: IKnotBagInstance
+  _t: Required<IKnotTemplateProps>
   constructor(clock: ClockPart, knots: IKnotProps[], knotTemplate: IKnotTemplateProps) {
-    
     const knotvalues: IKnotInstance[] = []
     const angle = mod(clock.angleStart, 360)
     const radius = valueOr(knotTemplate.knotRadius, RNDCLK_DF_KNOT_RADIUS)
@@ -27,6 +27,15 @@ export class KnotPart  {
     const border = valueOr(knotTemplate.knotBorder, RNDCLK_DF_KNOT_BORDER)
     const borderColor = valueOr(knotTemplate.knotBorderColor, RNDCLK_DF_KNOT_BORDER_COLOR)
     const disabled = clock.disabled
+    this._t = {
+      knotBgColor: bgColor,
+      knotBgColorDisabled: bgColorDisabled,
+      knotBgColorHover: bgColorHover,
+      knotBgColorSelected: bgColorSelected,
+      knotBorder: border,
+      knotBorderColor: borderColor,
+      knotRadius: radius,
+    }
 
     if (!knots || knots.length <= 0) {
       knotvalues.push({
@@ -42,9 +51,7 @@ export class KnotPart  {
         border,
         borderColor,
         disabled,
-
-
-      } )
+      })
     } else {
       for (let i = 0; i < knots.length; i++) {
         const knot = knots[i]
@@ -83,7 +90,7 @@ export class KnotPart  {
 
     this._i = {
       knots: knotvalues,
-      maxRadius: knotvalues.map((e) => e.radius  + e.border/2).reduce((prev, cur) => Math.max(prev, cur), -Infinity),
+      maxRadius: knotvalues.map((e) => e.radius + e.border / 2).reduce((prev, cur) => Math.max(prev, cur), -Infinity),
     }
   }
 
@@ -111,59 +118,50 @@ export class KnotPart  {
     return undefined
   }
 
-
   // try to return length , prevAngle, nextAngle
   // clockAngleInfo is from clockPart give startangle, endangle
-  public getAdjacentKnotInfo(index: number,clockAngleInfo: Vector2, isclosed: boolean) : Vector3 {
-
-    const length = this._i.knots.length;
+  public getAdjacentKnotInfo(index: number, clockAngleInfo: Vector2, isclosed: boolean): Vector3 {
+    const length = this._i.knots.length
     const [startAngleDeg, endAngleDeg] = clockAngleInfo
-    if(isclosed)
-    {
-      
-      const prevIndex = mod(index-1,length)
-      const nextIndex = mod(index+1, length)
+    if (isclosed) {
+      const prevIndex = mod(index - 1, length)
+      const nextIndex = mod(index + 1, length)
       const prevAngle = this._i.knots[prevIndex].angleDeg
       const nextAngle = this._i.knots[nextIndex].angleDeg
-      return [length,prevAngle,nextAngle]
+      return [length, prevAngle, nextAngle]
+    } else {
+      const prevAngle = index === 0 ? startAngleDeg : this._i.knots[index - 1].angleDeg
+      const nextAngle = index === this._i.knots.length - 1 ? endAngleDeg : this._i.knots[index + 1].angleDeg
+      return [length, prevAngle, nextAngle]
     }
-    else{
-
-      const prevAngle = index ===0 ?  startAngleDeg:   this._i.knots[index-1].angleDeg;
-      const nextAngle = index === this._i.knots.length-1 ? endAngleDeg: this._i.knots[index+1].angleDeg;
-      return [length, prevAngle,nextAngle]
-    }
-
   }
 
-  
+  public getNewKnots(knotIndex: number, newAngleDeg: number): IKnotInstance[] | null {
+    const changed = this._i.knots[knotIndex].angleDeg !== newAngleDeg
+    console.log(`try to find new knot`)
+    if (changed) {
+      console.log(`the new knots are changed`)
+      const newKnots = [...this._i.knots]
+      newKnots[knotIndex].prevAngleDeg = this._i.knots[knotIndex].angleDeg
+      newKnots[knotIndex].angleDeg = newAngleDeg
 
-  public getNewKnots(knotIndex: number, newAngleDeg: number): IKnotInstance[]|null {
-      const changed = this._i.knots[knotIndex].angleDeg !== newAngleDeg
-      console.log(`try to find new knot`)
-      if(changed)
-      {
-        console.log(`the new knots are changed`)
-        const newKnots = [...this._i.knots]
-        newKnots[knotIndex].prevAngleDeg =this._i.knots[knotIndex].angleDeg;
-        newKnots[knotIndex].angleDeg = newAngleDeg;
-
-        return newKnots
-
-      }
-      return null
+      return newKnots
+    }
+    return null
   }
 
   public set knots(newKnots: IKnotInstance[]) {
     this._i = {
       knots: [...newKnots],
-      maxRadius: newKnots.map((e) => e.radius  + e.border/2).reduce((prev, cur) => Math.max(prev, cur), -Infinity),
-
+      maxRadius: newKnots.map((e) => e.radius + e.border / 2).reduce((prev, cur) => Math.max(prev, cur), -Infinity),
     }
   }
-  
+
   public get knots(): IKnotInstance[] {
     return [...this._i.knots]
   }
 
+  public get knotTemplate(): Required<IKnotTemplateProps> {
+    return { ...this._t }
+  }
 }
