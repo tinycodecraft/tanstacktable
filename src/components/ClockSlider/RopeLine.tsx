@@ -8,14 +8,14 @@ import { RNDCLK_DF_ANIMATION_DURATION, RNDCLK_DF_ROPE_BG_COLOR } from 'src/confi
 import { getAnimationProgressAngle, getMouseInAngle, getStrokeColor } from 'src/config/geometries'
 import { valueOr } from 'src/config/methods'
 interface IRopeLineProps {
-  hideRope: boolean
-  disabled: boolean
-  ropeBgColorDisabled: string
-  ropeBgColor: string
-  ropeBgColorHover: string
+  hideRope?: boolean
+  disabled?: boolean
+  ropeBgColorDisabled?: string
+  ropeBgColor?: string
+  ropeBgColorHover?: string
   animateOnClick?: boolean
   animationDuration?: number
-  rangeDragging: boolean
+  rangeDragging?: boolean
   clockPart: ClockPart
   knotPart: KnotPart
   top: number
@@ -112,7 +112,7 @@ export const RopeLine = (props: IRopeLineProps) => {
   )
 
   useEffect(() => {
-    setStrokeColor(getStrokeColor(disabled, ropeBgColorDisabled, ropeBgColor, mouseOvered, ropeBgColorHover))
+    setStrokeColor(getStrokeColor(mouseOvered,disabled, ropeBgColorDisabled, ropeBgColor,  ropeBgColorHover))
   }, [disabled, ropeBgColorDisabled, ropeBgColor, ropeBgColorHover, mouseOvered])
 
   useEffect(() => {

@@ -119,11 +119,12 @@ const getMaxRadius = (knotCores: IKnotCore[], radiusDefault: number, borderDefau
     .reduce((prev, cur) => Math.max(prev, cur), -Infinity)
 }
 const getStrokeColor = (
-  disabled: boolean,
-  ropeBgColorDisabled: string,
-  ropeBgColor: string,
   mouseOvered: boolean,
-  ropeBgColorHover: string,
+  disabled?: boolean,
+  ropeBgColorDisabled?: string,
+  ropeBgColor?: string,
+  ropeBgColorHover?: string,
+  
 ): string => {
   if (disabled) return valueOr(ropeBgColorDisabled, RNDCLK_DF_ROPE_BG_COLOR_DISABLED)
   const bgColor = valueOr(ropeBgColor, RNDCLK_DF_ROPE_BG_COLOR)
@@ -131,6 +132,13 @@ const getStrokeColor = (
     return valueOr(ropeBgColorHover, bgColor)
   }
   return bgColor
+}
+const getDotFillColor = (knot: IKnotInstance, knotId: string,mouseOvered: boolean, knotBgColor: string, knotBgColorSelected:string,knotBgColorDisabled: string,knotBgColorHover: string) : string => {
+  if(knot.disabled) return knotBgColorDisabled;
+  if(mouseOvered) return knotBgColorHover;
+  if(knot.id === knotId) return knotBgColorSelected;
+  return knotBgColor;
+
 }
 
 const getAnimationProgressAngle = (
@@ -172,6 +180,7 @@ const getAnimationProgressAngle = (
   }
 }
 export {
+  getDotFillColor,
   getStrokeColor,
   getKnotsProps,
   createStroke,
