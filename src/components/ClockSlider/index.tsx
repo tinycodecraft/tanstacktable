@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { IAnchorProps, IData, IKnotInstance, IRoundClockProps } from 'src/config/types'
+import { IAnchorProps, IData, IKnotInstance, IRopeProps, IRoundClockProps, ITicksProps } from 'src/config/types'
 import { ClockPart } from './model/ClockPart'
 import { KnotPart } from './model/KnotPart'
 import { mod } from 'mz-math'
@@ -7,6 +7,9 @@ import { RNDCLK_DF_KNOT_BORDER, RNDCLK_DF_KNOT_RADIUS, RNDCLK_DF_MAX, RNDCLK_DF_
 import { numberOr } from 'src/config/methods'
 import { checkAngleInArc, getClosestEdge, getKnotsProps, getMaxRadius, getSteppedAngle } from 'src/config/geometries'
 import { ClockFace } from './ClockFace'
+import { TickMarks } from './TickMarks'
+import { RopeLine } from './RopeLine'
+import { KnotDot } from './KnotDot'
 
 export const ClockSlider = (props: IRoundClockProps) => {
   const [data, setData] = useState<IData | null>(null)
@@ -15,23 +18,20 @@ export const ClockSlider = (props: IRoundClockProps) => {
   const [knotPart, setKnotPart] = useState<KnotPart | null>(null)
   const [selectedKnotId, setSelectedKnotId] = useState('')
   const { animateOnClick, animationDuration, pathBgColor, pathBorderColor } = props
-  const svgRef = useRef<SVGSVGElement|null>(null)
+  const svgRef = useRef<SVGSVGElement | null>(null)
   const prevAngleDegRef = useRef<number | null>(null)
-  
-  const [anchor, setAnchor] = useState<IAnchorProps>( { left: 0, top: 0 } )
 
-  const measuredRef = useCallback((node: SVGSVGElement)=> {
-    if(node!=null)
-    {
+  const [anchor, setAnchor] = useState<IAnchorProps>({ left: 0, top: 0 })
+
+  const measuredRef = useCallback((node: SVGSVGElement) => {
+    if (node != null) {
       setAnchor(node.getBoundingClientRect())
-      svgRef.current = node;
+      svgRef.current = node
       console.log(`the anchor svg is detected!`)
     }
-
-  },[]);
+  }, [])
 
   useEffect(() => {
-
     const clearSelectedPointer = (evt: MouseEvent) => {
       const $target = evt.target as HTMLElement
       const $pointer = $target.closest('[data-type="pointer"]')
@@ -75,7 +75,7 @@ export const ClockSlider = (props: IRoundClockProps) => {
     if (haschanged) {
       setData(myclockPart.data)
     }
-  }, [data, props,anchor])
+  }, [data, props, anchor])
 
   useEffect(() => {
     if (clockPart !== null) {
@@ -83,8 +83,6 @@ export const ClockSlider = (props: IRoundClockProps) => {
       const myknotPart = new KnotPart(clockPart, props.knots || [], props)
       setKnotPart(myknotPart)
     }
-
-
   }, [
     props.knotRadius,
     props.pathBgColor,
@@ -106,7 +104,6 @@ export const ClockSlider = (props: IRoundClockProps) => {
     props.pathEndAngle,
     clockPart,
     data,
-
   ])
 
   const focusKnot = (id: string, svgElement: SVGSVGElement | null) => {
@@ -244,6 +241,37 @@ export const ClockSlider = (props: IRoundClockProps) => {
             pathBgColor={pathBgColor}
             pathBorderColor={pathBorderColor}
           />
+          <TickMarks clockPart={clockPart} {...(props as ITicksProps)} />
+          <RopeLine
+            clockPart={clockPart}
+            knotPart={knotPart}
+            left={anchor.left}
+            top={anchor.top}
+            setKnot={refreshKnot}
+            animateOnClick={animateOnClick}
+            animationDuration={animationDuration}
+            disabled={props.disabled}
+            {...(props as IRopeProps)}
+          />
+          {knotPart &&
+            knotPart.knots.map((knot, i) => {
+              return (
+                <KnotDot
+                  key={knot.id}
+                  clockPart={clockPart}
+                  knot={knot}
+                  knotPart={knotPart}
+                  left={anchor.left}
+                  top={anchor.top}
+                  selectedKnotId={selectedKnotId}
+                  setKnot={refreshKnot}
+                  disabled={props.disabled}
+                  keyboardDisabled={props.keyboardDisabled}
+                  knotSVG={props.knotSVG}
+                  mouseWheelDisabled={props.mousewheelDisabled}
+                />
+              )
+            })}
         </svg>
       )}
     </>
