@@ -67,4 +67,8 @@ export class RopePart  {
 
     return [beginKnot, endKnot]
   }
+
+  public get stroke(): IStrokeProps {
+    return this._s
+  }  
 }

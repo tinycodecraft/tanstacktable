@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState, MouseEvent as ReactMouseEvent } from 'react'
 import { ClockPart } from './model/ClockPart'
 import { RopePart } from './model/RopePart'
-import { IAnimateProps, IKnotInstance, IRopeProps } from 'src/config/types'
+import { IAnimateProps, IKnotInstance, IRopeProps, IStrokeProps } from 'src/config/types'
 import { KnotPart } from './model/KnotPart'
 import { IAnimationResult, animate, mod } from 'mz-math'
 import { RNDCLK_DF_ANIMATION_DURATION, RNDCLK_DF_ROPE_BG_COLOR } from 'src/config/constants'
@@ -9,8 +9,7 @@ import { getAnimationProgressAngle, getMouseInAngle, getStrokeColor } from 'src/
 import { valueOr } from 'src/config/methods'
 
 interface IRopeLineProps extends IRopeProps, IAnimateProps {
-  disabled?: boolean
-  hideRope?: boolean  
+  disabled?: boolean  
   clockPart: ClockPart
   knotPart: KnotPart
   top: number
@@ -43,7 +42,7 @@ export const RopeLine = (props: IRopeLineProps) => {
   const animationSourceDegrees = useRef(0)
   const animationTargetDegrees = useRef(0)
   const [cx, cy, radius] = clockPart.clockCoordinates
-  const stroke = clockPart.stroke
+  const [stroke, setStroke] = useState<IStrokeProps>(ropePart?.stroke ?? clockPart.stroke)
 
   const onMouseUp = () => {
     window.removeEventListener('mousemove', onValueChange)
@@ -112,7 +111,10 @@ export const RopeLine = (props: IRopeLineProps) => {
 
   useEffect(() => {
     if (clockPart && knotPart) {
-      setRopePart(new RopePart(clockPart.core, knotPart.knots))
+      const itRopePart = new RopePart(clockPart.core, knotPart.knots)
+      setRopePart(itRopePart)
+      setStroke(itRopePart.stroke)
+
     }
   }, [clockPart, knotPart])
   useEffect(
@@ -148,7 +150,7 @@ export const RopeLine = (props: IRopeLineProps) => {
 
   return (
     <>
-      {valueOr(hideRope, false) && ropePart && (
+      {valueOr(hideRope, false) && (
         <circle
           data-type='connection'
           className='mz-round-slider-connection'
