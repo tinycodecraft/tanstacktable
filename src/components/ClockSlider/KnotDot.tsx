@@ -14,10 +14,6 @@ interface IKnotDotProps {
   keyboardDisabled?: boolean
   knot: IKnotInstance
   selectedKnotId: string
-  knotBgColor: string
-  knotBgColorSelected: string
-  knotBgColorDisabled: string
-  knotBgColorHover: string
   clockPart: ClockPart
   knotPart: KnotPart
   top: number
@@ -26,23 +22,7 @@ interface IKnotDotProps {
 }
 
 export const KnotDot = (props: IKnotDotProps) => {
-  const {
-    knotSVG,
-    disabled,
-    mouseWheelDisabled,
-    keyboardDisabled,
-    clockPart,
-    knotPart,
-    top,
-    left,
-    setKnot,
-    knotBgColor,
-    knotBgColorDisabled,
-    knotBgColorHover,
-    knotBgColorSelected,
-    selectedKnotId,
-    knot,
-  } = props
+  const { knotSVG, disabled, mouseWheelDisabled, keyboardDisabled, clockPart, knotPart, top, left, setKnot, selectedKnotId, knot } = props
 
   const dotRef = useRef<SVGGElement | null>(null)
   const [cx, cy, radius] = clockPart.clockCoordinates
@@ -118,8 +98,8 @@ export const KnotDot = (props: IKnotDotProps) => {
   )
 
   useEffect(() => {
-    setFillColor(getDotFillColor(knot, selectedKnotId, mouseOvered, knotBgColor, knotBgColorSelected, knotBgColorDisabled, knotBgColorHover))
-  }, [knot, selectedKnotId, knotBgColor, knotBgColorSelected, knotBgColorHover, mouseOvered])
+    setFillColor(getDotFillColor(knot, selectedKnotId, mouseOvered))
+  }, [knot, selectedKnotId, mouseOvered])
 
   useEffect(() => {
     const value = clockPart.angle2value(knot.angleDeg)
@@ -166,7 +146,7 @@ export const KnotDot = (props: IKnotDotProps) => {
       {center && (
         <g
           ref={dotRef}
-          transform={`translate(${center[0] - radius / 2}, ${center[1] - radius / 2})`}
+          transform={`translate(${center[0] - knot.radius / 2}, ${center[1] - knot.radius / 2})`}
           role='slider'
           aria-disabled={knot.disabled ? true : undefined}
           aria-valuenow={knot.angleDeg}
@@ -187,9 +167,9 @@ export const KnotDot = (props: IKnotDotProps) => {
         >
           {!knotSVG && (
             <circle
-              cx={radius / 2}
-              cy={radius / 2}
-              r={radius}
+              cx={knot.radius / 2}
+              cy={knot.radius / 2}
+              r={knot.radius}
               fill={fillColor}
               strokeWidth={knot.border}
               stroke={knot.borderColor}

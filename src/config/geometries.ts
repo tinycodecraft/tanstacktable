@@ -133,11 +133,11 @@ const getStrokeColor = (
   }
   return bgColor
 }
-const getDotFillColor = (knot: IKnotInstance, knotId: string,mouseOvered: boolean, knotBgColor: string, knotBgColorSelected:string,knotBgColorDisabled: string,knotBgColorHover: string) : string => {
-  if(knot.disabled) return knotBgColorDisabled;
-  if(mouseOvered) return knotBgColorHover;
-  if(knot.id === knotId) return knotBgColorSelected;
-  return knotBgColor;
+const getDotFillColor = (knot: IKnotInstance, knotId: string,mouseOvered: boolean) : string => {
+  if(knot.disabled) return knot.bgColorDisabled;
+  if(mouseOvered) return knot.bgColorHover;
+  if(knot.id === knotId) return knot.bgColorSelected;
+  return knot.bgColor;
 
 }
 
