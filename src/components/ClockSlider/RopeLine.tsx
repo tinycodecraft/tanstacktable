@@ -1,21 +1,16 @@
 import React, { useCallback, useEffect, useRef, useState, MouseEvent as ReactMouseEvent } from 'react'
 import { ClockPart } from './model/ClockPart'
 import { RopePart } from './model/RopePart'
-import { IKnotInstance } from 'src/config/types'
+import { IAnimateProps, IKnotInstance, IRopeProps } from 'src/config/types'
 import { KnotPart } from './model/KnotPart'
 import { IAnimationResult, animate, mod } from 'mz-math'
 import { RNDCLK_DF_ANIMATION_DURATION, RNDCLK_DF_ROPE_BG_COLOR } from 'src/config/constants'
 import { getAnimationProgressAngle, getMouseInAngle, getStrokeColor } from 'src/config/geometries'
 import { valueOr } from 'src/config/methods'
-interface IRopeLineProps {
-  hideRope?: boolean
+
+interface IRopeLineProps extends IRopeProps, IAnimateProps {
   disabled?: boolean
-  ropeBgColorDisabled?: string
-  ropeBgColor?: string
-  ropeBgColorHover?: string
-  animateOnClick?: boolean
-  animationDuration?: number
-  rangeDragging?: boolean
+  hideRope?: boolean  
   clockPart: ClockPart
   knotPart: KnotPart
   top: number

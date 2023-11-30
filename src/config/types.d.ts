@@ -49,7 +49,7 @@ export type Person = {
 
 export const FETCHSIZE = 20
 
-export interface IRoundClockProps extends IKnotTemplateProps,ITicksProps {
+export interface IRoundClockProps extends IKnotTemplateProps, ITicksProps,IRopeProps,IAnimateProps,IKnotActionProps {
   // svg ------------------
   // A string specifying the backgroun color of the SVG.
   // The default value is undefined.
@@ -138,7 +138,7 @@ export interface IRoundClockProps extends IKnotTemplateProps,ITicksProps {
 
   // knots -------------
   knots?: IKnotProps[]
-   // A boolean value indicating whether the pointers
+  // A boolean value indicating whether the pointers
   // on the round slider can overlap each other.
   // The default value is false.
   knotsOverlap?: boolean
@@ -149,31 +149,7 @@ export interface IRoundClockProps extends IKnotTemplateProps,ITicksProps {
   // The default value is undefined.
   knotSVG?: ReactNode
 
-  // Rope ------------
-  // A boolean value indicating whether to hide the Rope line.
-  // If set to true, the Rope line will not be visible.
-  // The default value is false.
-  hideRope?: boolean
 
-  // A string specifying the background color of the Rope line.
-  // The default value is #5daed2.
-  RopeBgColor?: string
-
-  // A string specifying the background color of the Rope line
-  // when the slider is in a disabled state.
-  // The default value is #97b0bb.
-  RopeBgColorDisabled?: string
-
-  // A string specifying the background color of the Rope line
-  // when the slider is being hovered over.
-  // The default value is equal to RopeBgColor property.
-  RopeBgColorHover?: string
-
-  // A boolean value indicating whether to enable range dragging.
-  // If set to true, the slider Rope line can be dragged
-  // in a circular range, allowing for continuous circular movement.
-  // The default value is false.
-  rangeDragging?: boolean
 
   // text ------------------
   // A boolean value indicating whether to hide the text
@@ -227,7 +203,6 @@ export interface IRoundClockProps extends IKnotTemplateProps,ITicksProps {
   // The default value is false.
   enableTicks?: boolean
 
-
   // A string specifying the prefix
   // to be displayed before the tick values.
   // This allows for adding additional text
@@ -250,6 +225,15 @@ export interface IRoundClockProps extends IKnotTemplateProps,ITicksProps {
   // The default value is false.
   disabled?: boolean
 
+
+
+  // other -----------------
+  svgDefs?: ReactNode
+
+
+}
+
+export interface IKnotActionProps {
   // A boolean value indicating whether keyboard interactions
   // are disabled for the round slider. If set to true,
   // the slider will not respond to keyboard inputs
@@ -263,10 +247,10 @@ export interface IRoundClockProps extends IKnotTemplateProps,ITicksProps {
   // in the slider's position or value.
   // The default value is false.
   mousewheelDisabled?: boolean
+}
 
-  // other -----------------
-  SvgDefs?: ReactNode
 
+export interface IAnimateProps {
   // animation -------------
   // A boolean value indicating
   // whether to enable animation
@@ -281,18 +265,41 @@ export interface IRoundClockProps extends IKnotTemplateProps,ITicksProps {
   // This determines the speed at which the animation is performed.
   // The default value is 200 ms.
   animationDuration?: number
+}
 
+export interface IRopeProps {
+    // A boolean value indicating whether to hide the Rope line.
+  // If set to true, the Rope line will not be visible.
+  // The default value is false.
+  hideRope?: boolean
 
+  // A string specifying the background color of the Rope line.
+  // The default value is #5daed2.
+  ropeBgColor?: string
 
+  // A string specifying the background color of the Rope line
+  // when the slider is in a disabled state.
+  // The default value is #97b0bb.
+  ropeBgColorDisabled?: string
+
+  // A string specifying the background color of the Rope line
+  // when the slider is being hovered over.
+  // The default value is equal to RopeBgColor property.
+  ropeBgColorHover?: string
+
+  // A boolean value indicating whether to enable range dragging.
+  // If set to true, the slider Rope line can be dragged
+  // in a circular range, allowing for continuous circular movement.
+  // The default value is false.
+  rangeDragging?: boolean
 }
 
 export interface ITicksProps {
-
   // A number specifying the total count of ticks
   // to be displayed on the slider.
   // This determines the number of evenly spaced ticks
   // along the slider's circumference.
-  ticksCount?: number  
+  ticksCount?: number
 
   // A boolean value indicating whether to enable
   // the display of ticks (marks) on the slider.
@@ -319,7 +326,7 @@ export interface ITicksProps {
   // This determines the gap or margin between the ticks
   // and the circular slider track.
   // The default value is 0.
-  ticksDistanceToPanel?: number  
+  ticksDistanceToPanel?: number
 
   // A number specifying the distance
   // between the tick values and the slider.
@@ -331,7 +338,7 @@ export interface ITicksProps {
   // A string specifying the color of the ticks.
   // This color is applied to the tick marks.
   // The default value is #efefef.
-  ticksColor?: string  
+  ticksColor?: string
 
   // A string specifying the color of the tick values.
   // This color is applied to the text of the tick labels.
@@ -348,7 +355,7 @@ export interface ITicksProps {
   // or larger divisions between ticks.
   // For example, if set to 2, every second tick will be a larger tick.
   // The default value is 10.
-  ticksGroupSize?: number  
+  ticksGroupSize?: number
 
   // A boolean value indicating
   // whether to show tick values only for longer ticks.
@@ -356,7 +363,7 @@ export interface ITicksProps {
   // only for the longer tick marks.
   // This is useful for displaying labels on selected or significant ticks.
   // The default value is true.
-  longerTickValuesOnly?: boolean    
+  longerTickValuesOnly?: boolean
 
   // tick values -----------
   // A boolean value indicating
@@ -364,9 +371,6 @@ export interface ITicksProps {
   // If set to true, the tick values will be displayed.
   // The default value is true.
   showTickValues?: boolean
-
-
-
 }
 
 export interface IKnotCore {
@@ -376,13 +380,9 @@ export interface IKnotCore {
   // The width of the border around the pointer in SVG units.
   // Default value = 0.
   border?: number
-
 }
 
-
 export interface IKnotProps extends IKnotCore {
-
-
   // The value associated with the pointer.
   // This value determines the position of the pointer on the slider.
   // Default value = 0.
@@ -419,14 +419,13 @@ export interface IKnotProps extends IKnotCore {
   ariaLabel?: string
 }
 
-export interface IKnotInstance extends Omit<Required<IKnotProps>,'value|ariaLabel'>  {
+export interface IKnotInstance extends Omit<Required<IKnotProps>, 'value|ariaLabel'> {
   id: string
   index: number
   angleDeg: number
   prevAngleDeg: number
-  value?: string|number
+  value?: string | number
   ariaLabel?: string
-
 }
 export interface IKnotBagInstance {
   knots: IKnotInstance[]
@@ -437,10 +436,8 @@ export interface IStrokeProps {
   strokeOffset: number
 }
 
-
 export interface IKnotTemplateProps {
-
-   // A string specifying the background color of the pointer.
+  // A string specifying the background color of the pointer.
   // The default value is #163a86.
   knotBgColor?: string
   // A string specifying the background color of the pointer
@@ -481,24 +478,22 @@ export interface IData {
 export interface IClockCore {
   cx: number
   cy: number
-  radius: number  
+  radius: number
   startAngleDeg: number
   endAngleDeg: number
 }
 
 export interface IRopeInstance extends IClockCore {
-  knots: IKnotInstance[]  
+  knots: IKnotInstance[]
 }
 
-
-export interface IClockInstance extends IData,IClockCore {
-
+export interface IClockInstance extends IData, IClockCore {
   size: number
   thickness: number
   border: number
 
   left: number
-  top: number,
+  top: number
   disabled: boolean
 }
 

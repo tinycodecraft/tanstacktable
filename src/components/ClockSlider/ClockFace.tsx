@@ -2,18 +2,16 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { ClockPart } from './model/ClockPart'
 import { KnotPart } from './model/KnotPart'
 import { IAnimationResult, animate, newId } from 'mz-math'
-import { IAnchorProps, IKnotInstance } from 'src/config/types'
+import { IAnchorProps, IAnimateProps, IKnotInstance } from 'src/config/types'
 import { getAnimationProgressAngle, getMouseInAngle } from 'src/config/geometries'
 import { RNDCLK_DF_ANIMATION_DURATION, RNDCLK_DF_PATH_BG_COLOR, RNDCLK_DF_PATH_BORDER_COLOR } from 'src/config/constants'
 import { valueOr } from 'src/config/methods'
 import { InnerFace } from './InnerFace'
 
-interface IClockFaceProps {
+interface IClockFaceProps extends IAnimateProps {
   disabled?: boolean
   clockPart: ClockPart
   knotPart: KnotPart
-  animateOnClick?: boolean
-  animationDuration?: number
   pathBorderColor?: string
   pathBgColor?: string
   pathInnerBgColor?: string

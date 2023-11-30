@@ -13,7 +13,7 @@ export const ClockSlider = (props: IRoundClockProps) => {
 
   const [clockPart, setClockPart] = useState<ClockPart | null>(null)
   const [knotPart, setKnotPart] = useState<KnotPart | null>(null)
-  const [selectedPointerId, setSelectedPointerId] = useState('')
+  const [selectedKnotId, setSelectedKnotId] = useState('')
   const { animateOnClick, animationDuration, pathBgColor, pathBorderColor } = props
   const svgRef = useRef<SVGSVGElement|null>(null)
   const prevAngleDegRef = useRef<number | null>(null)
@@ -37,7 +37,7 @@ export const ClockSlider = (props: IRoundClockProps) => {
       const $pointer = $target.closest('[data-type="pointer"]')
       if ($pointer) return
 
-      setSelectedPointerId('')
+      setSelectedKnotId('')
     }
     document.addEventListener('mousedown', clearSelectedPointer)
 
@@ -110,7 +110,7 @@ export const ClockSlider = (props: IRoundClockProps) => {
   ])
 
   const focusKnot = (id: string, svgElement: SVGSVGElement | null) => {
-    setSelectedPointerId(id)
+    setSelectedKnotId(id)
     if (svgElement != null) {
       // eslint-disable-next-line @typescript-eslint/non-nullable-type-assertion-style
       const $pointer = svgElement.querySelector(`[data-id="${id}"]`) as HTMLElement
@@ -231,7 +231,7 @@ export const ClockSlider = (props: IRoundClockProps) => {
           style={props.svgBgColor ? { ...OUTLINENONE_CSS, backgroundColor: props.svgBgColor } : OUTLINENONE_CSS}
           className={`mz-round-slider ${props.disabled ? 'mz-round-slider-disabled' : ''}`}
         >
-          {props.SvgDefs && <defs>{props.SvgDefs}</defs>}
+          {props.svgDefs && <defs>{props.svgDefs}</defs>}
 
           <ClockFace
             clockPart={clockPart}
