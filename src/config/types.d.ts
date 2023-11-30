@@ -49,7 +49,7 @@ export type Person = {
 
 export const FETCHSIZE = 20
 
-export interface IRoundClockProps extends IKnotTemplateProps, ITicksProps,IRopeProps,IAnimateProps,IKnotActionProps {
+export interface IRoundClockProps extends IKnotTemplateProps, ITicksProps, IRopeProps, IAnimateProps, IKnotActionProps {
   // svg ------------------
   // A string specifying the backgroun color of the SVG.
   // The default value is undefined.
@@ -149,8 +149,6 @@ export interface IRoundClockProps extends IKnotTemplateProps, ITicksProps,IRopeP
   // The default value is undefined.
   knotSVG?: ReactNode
 
-
-
   // text ------------------
   // A boolean value indicating whether to hide the text
   // displayed on the slider.
@@ -196,27 +194,6 @@ export interface IRoundClockProps extends IKnotTemplateProps, ITicksProps,IRopeP
   // The default value is undefined.
   textBetween?: string
 
-  // ticks -----------------
-  // A boolean value indicating whether to enable
-  // the display of ticks (marks) on the slider.
-  // If set to true, the ticks will be visible.
-  // The default value is false.
-  enableTicks?: boolean
-
-  // A string specifying the prefix
-  // to be displayed before the tick values.
-  // This allows for adding additional text
-  // or symbols to the displayed tick labels.
-  // The default value is undefined.
-  tickValuesPrefix?: string
-
-  // A string specifying the suffix
-  // to be displayed after the tick values.
-  // This allows for adding additional text
-  // or symbols to the displayed tick labels.
-  // The default value is undefined.
-  tickValuesSuffix?: string
-
   // disabled --------------
   // A boolean value indicating whether the round slider
   // is in a disabled state. If set to true,
@@ -225,12 +202,8 @@ export interface IRoundClockProps extends IKnotTemplateProps, ITicksProps,IRopeP
   // The default value is false.
   disabled?: boolean
 
-
-
   // other -----------------
   svgDefs?: ReactNode
-
-
 }
 
 export interface IKnotActionProps {
@@ -248,7 +221,6 @@ export interface IKnotActionProps {
   // The default value is false.
   mousewheelDisabled?: boolean
 }
-
 
 export interface IAnimateProps {
   // animation -------------
@@ -268,7 +240,7 @@ export interface IAnimateProps {
 }
 
 export interface IRopeProps {
-    // A boolean value indicating whether to hide the Rope line.
+  // A boolean value indicating whether to hide the Rope line.
   // If set to true, the Rope line will not be visible.
   // The default value is false.
   hideRope?: boolean
@@ -350,6 +322,11 @@ export interface ITicksProps {
   // The default value is 12.
   tickValuesFontSize?: number
 
+  // A string specifying the font family of the tick values.
+  // This allows for customizing the font used for the tick labels.
+  // The default value is undefined.
+  tickValuesFontFamily?: string
+
   // A number specifying the number of ticks to group together.
   // This can be used to create intervals
   // or larger divisions between ticks.
@@ -371,6 +348,20 @@ export interface ITicksProps {
   // If set to true, the tick values will be displayed.
   // The default value is true.
   showTickValues?: boolean
+
+  // A string specifying the prefix
+  // to be displayed before the tick values.
+  // This allows for adding additional text
+  // or symbols to the displayed tick labels.
+  // The default value is undefined.
+  tickValuesPrefix?: string
+
+  // A string specifying the suffix
+  // to be displayed after the tick values.
+  // This allows for adding additional text
+  // or symbols to the displayed tick labels.
+  // The default value is undefined.
+  tickValuesSuffix?: string
 }
 
 export interface IKnotCore {
@@ -500,4 +491,24 @@ export interface IClockInstance extends IData, IClockCore {
 export interface IAnchorProps {
   top: number
   left: number
+}
+
+export interface IMarkProps {
+  x: number
+  y: number
+  x1: number
+  y1: number
+  textX: number
+  textY: number
+  isLonger: boolean
+  showText: boolean
+  markValue?: string
+}
+
+export interface IMarkInstance {
+  marks: IMarkProps[]
+}
+
+export interface IMarkTemplateProps extends Required<Omit<ITicksProps, 'tickValuesFontFamily'>> {
+  tickValuesFontFamily?: string
 }
