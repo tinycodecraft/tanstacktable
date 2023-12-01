@@ -267,6 +267,11 @@ export interface IRopeProps {
 }
 
 export interface ITicksProps {
+
+  // tickAngleShift
+  // try to shift the tick around the clock in Degree
+  ticksAngleShift?: number
+
   // A number specifying the total count of ticks
   // to be displayed on the slider.
   // This determines the number of evenly spaced ticks

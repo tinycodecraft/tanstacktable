@@ -60,18 +60,19 @@ function App() {
             <ClockSlider 
               knots={knots}
               onChange={setKnots}
-              pathStartAngle={0}
-              pathEndAngle={270}
+              min={0}
+              max={12}
               enableTicks={true}
+              ticksAngleShift={270}
               ticksWidth={3}
               ticksHeight={10}
               longerTicksHeight={25}
-              ticksCount={100}
+              ticksCount={60}
               ticksGroupSize={5}
               longerTickValuesOnly={true}
               ticksDistanceToPanel={3}
               ticksColor={'#efefef'}
-              
+
             />
           </Tabs.Panel>
         </Tabs>

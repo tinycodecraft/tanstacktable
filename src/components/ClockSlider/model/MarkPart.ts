@@ -12,7 +12,7 @@ import {
 import { IMarkInstance, IMarkProps, IMarkTemplateProps, ITicksProps } from 'src/config/types'
 import { ClockPart } from './ClockPart'
 import { valueOr } from 'src/config/methods'
-import { circleMovement, convertRange, degreesToRadians, setDecimalPlaces, v2MulScalar, v2Normalize } from 'mz-math'
+import { circleMovement, convertRange, degreesToRadians, mod, setDecimalPlaces, v2MulScalar, v2Normalize } from 'mz-math'
 
 export class MarkPart {
   _i: IMarkInstance
@@ -47,6 +47,7 @@ export class MarkPart {
       showTickValues: valueOr(markTemplate.showTickValues, true),
       tickValuesPrefix: valueOr(markTemplate.tickValuesPrefix,''),
       tickValuesSuffix: valueOr(markTemplate.tickValuesSuffix,''),
+      ticksAngleShift: valueOr(markTemplate.ticksAngleShift,0)
     }
 
     const marks: IMarkProps[] = []
@@ -59,10 +60,12 @@ export class MarkPart {
     }
     const ticksSettings = this._t
     for (let i = 0; i < count; i++) {
-      const currentAngle = clockPart.angleStart + i * oneMarkAngleSize
+      const currentAngle = mod( clockPart.angleStart + i * oneMarkAngleSize + ticksSettings.ticksAngleShift,360) 
       const angleRad = convertRange(degreesToRadians(currentAngle), 0, Math.PI * 2, 0, Math.PI) // [0, Math.PI*2] ---> [0, Math.PI]
+      
 
       let [x, y] = circleMovement([cx, cy], angleRad, radius)
+      console.log(`the angle of index ${i} = ${angleRad} for angle ${currentAngle} at [${x},${y}] for center [${cx},${cy}]`)
 
       const isLonger = ticksSettings.ticksGroupSize !== undefined && i % ticksSettings.ticksGroupSize === 0
 

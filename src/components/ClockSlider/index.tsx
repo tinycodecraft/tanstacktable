@@ -12,8 +12,6 @@ import { RopeLine } from './RopeLine'
 import { KnotDot } from './KnotDot'
 
 export const ClockSlider = (props: IRoundClockProps) => {
-  
-
   const [clockPart, setClockPart] = useState<ClockPart | null>(null)
   const [knotPart, setKnotPart] = useState<KnotPart | null>(null)
   const [selectedKnotId, setSelectedKnotId] = useState('')
@@ -25,17 +23,15 @@ export const ClockSlider = (props: IRoundClockProps) => {
 
   const measuredRef = useCallback((node: SVGSVGElement) => {
     if (node != null) {
-      const { top, left} =node.getBoundingClientRect()
+      const { top, left } = node.getBoundingClientRect()
       setAnchor(node.getBoundingClientRect())
       svgRef.current = node
-      setAnchor({ left, top})
-
+      setAnchor({ left, top })
     }
   }, [])
-  useEffect(()=>{
-    if(anchor)
-    {
-      const { top,left} = anchor;
+  useEffect(() => {
+    if (anchor) {
+      const { top, left } = anchor
       console.log(`the anchor svg is detected!`)
       const myclockPart = new ClockPart(
         {
@@ -56,16 +52,25 @@ export const ClockSlider = (props: IRoundClockProps) => {
         top,
         left,
       )
-  
+
       setClockPart(myclockPart)
-  
+
       const myknotPart = new KnotPart(myclockPart, props.knots || [], props)
-      setKnotPart(myknotPart) 
+      setKnotPart(myknotPart)
     }
-  
-
-
-  },[anchor])
+  }, [
+    anchor,
+    props.ticksCount,
+    props.min,
+    props.max,
+    props.data,
+    props.pathStartAngle,
+    props.pathEndAngle,
+    props.enableTicks,
+    props.step,
+    props.arrowStep,
+    props.ticksGroupSize,
+  ])
 
   useEffect(() => {
     const clearSelectedPointer = (evt: MouseEvent) => {
@@ -81,9 +86,6 @@ export const ClockSlider = (props: IRoundClockProps) => {
       document.removeEventListener('mousedown', clearSelectedPointer)
     }
   }, [anchor])
-
-
-
 
   const focusKnot = (id: string, svgElement: SVGSVGElement | null) => {
     setSelectedKnotId(id)
@@ -221,8 +223,6 @@ export const ClockSlider = (props: IRoundClockProps) => {
             pathBorderColor={pathBorderColor}
           />
           <TickMarks clockPart={clockPart} {...(props as ITicksProps)} />
-
-
         </svg>
       )}
     </>
