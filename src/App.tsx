@@ -55,11 +55,23 @@ function App() {
               <PersonGroupTable></PersonGroupTable>
             </PeopleTableProvider>
           </Tabs.Panel>
-          <Tabs.Panel value='slider'>
+          <Tabs.Panel value='slider' className='bg-white'>
             <Text color='red' >This is a good slider</Text>
             <ClockSlider 
               knots={knots}
               onChange={setKnots}
+              pathStartAngle={0}
+              pathEndAngle={270}
+              enableTicks={true}
+              ticksWidth={3}
+              ticksHeight={10}
+              longerTicksHeight={25}
+              ticksCount={100}
+              ticksGroupSize={5}
+              longerTickValuesOnly={true}
+              ticksDistanceToPanel={3}
+              ticksColor={'#efefef'}
+              
             />
           </Tabs.Panel>
         </Tabs>

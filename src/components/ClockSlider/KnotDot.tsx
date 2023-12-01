@@ -88,6 +88,7 @@ export const KnotDot = (props: IKnotDotProps) => {
       const mouseAngle = getMouseInAngle([left, top], [mouseX, mouseY], clockPart.clockCoordinates)
       let newAngleDeg = null
       if (!checkAngleInArc(clockPart.angleStart, clockPart.angleEnd, mouseAngle)) {
+        console.log(`not in arc ${mouseAngle} with ${mouseX}, ${mouseY}`)
         newAngleDeg = getClosestEdge(clockPart.angleStart, clockPart.angleEnd, knot.angleDeg, clockPart.clockCoordinates)
       } else {
         newAngleDeg = mouseAngle

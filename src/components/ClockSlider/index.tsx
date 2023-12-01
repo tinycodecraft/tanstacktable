@@ -12,7 +12,7 @@ import { RopeLine } from './RopeLine'
 import { KnotDot } from './KnotDot'
 
 export const ClockSlider = (props: IRoundClockProps) => {
-  const [data, setData] = useState<IData | null>(null)
+  
 
   const [clockPart, setClockPart] = useState<ClockPart | null>(null)
   const [knotPart, setKnotPart] = useState<KnotPart | null>(null)
@@ -25,11 +25,47 @@ export const ClockSlider = (props: IRoundClockProps) => {
 
   const measuredRef = useCallback((node: SVGSVGElement) => {
     if (node != null) {
+      const { top, left} =node.getBoundingClientRect()
       setAnchor(node.getBoundingClientRect())
       svgRef.current = node
-      console.log(`the anchor svg is detected!`)
+      setAnchor({ left, top})
+
     }
   }, [])
+  useEffect(()=>{
+    if(anchor)
+    {
+      const { top,left} = anchor;
+      console.log(`the anchor svg is detected!`)
+      const myclockPart = new ClockPart(
+        {
+          min: numberOr(props.min, RNDCLK_DF_MIN),
+          max: numberOr(props.max, RNDCLK_DF_MAX),
+          border: props.pathBorder,
+          data: props.data,
+          round: props.round,
+          startAngleDeg: props.pathStartAngle,
+          endAngleDeg: props.pathEndAngle,
+          radius: props.pathRadius,
+          thickness: props.pathThickness,
+          disabled: props.disabled,
+        },
+        getMaxRadius(props.knots || [], RNDCLK_DF_KNOT_RADIUS, RNDCLK_DF_KNOT_BORDER),
+        props.step,
+        props.arrowStep,
+        top,
+        left,
+      )
+  
+      setClockPart(myclockPart)
+  
+      const myknotPart = new KnotPart(myclockPart, props.knots || [], props)
+      setKnotPart(myknotPart) 
+    }
+  
+
+
+  },[anchor])
 
   useEffect(() => {
     const clearSelectedPointer = (evt: MouseEvent) => {
@@ -46,65 +82,8 @@ export const ClockSlider = (props: IRoundClockProps) => {
     }
   }, [anchor])
 
-  useEffect(() => {
-    const { top, left } = anchor
-    console.log(`creating clock part with top: ${top},left: ${left}`)
-    const myclockPart = new ClockPart(
-      {
-        min: numberOr(props.min, RNDCLK_DF_MIN),
-        max: numberOr(props.max, RNDCLK_DF_MAX),
-        border: props.pathBorder,
-        data: props.data,
-        round: props.round,
-        startAngleDeg: props.pathStartAngle,
-        endAngleDeg: props.pathEndAngle,
-        radius: props.pathRadius,
-        thickness: props.pathThickness,
-        disabled: props.disabled,
-      },
-      getMaxRadius(props.knots || [], RNDCLK_DF_KNOT_RADIUS, RNDCLK_DF_KNOT_BORDER),
-      props.step,
-      props.arrowStep,
-      top,
-      left,
-    )
 
-    setClockPart(myclockPart)
 
-    const haschanged = JSON.stringify(data) !== JSON.stringify(myclockPart.data)
-    if (haschanged) {
-      setData(myclockPart.data)
-    }
-  }, [data, props, anchor])
-
-  useEffect(() => {
-    if (clockPart !== null) {
-      console.log(`try to create the knotpart`)
-      const myknotPart = new KnotPart(clockPart, props.knots || [], props)
-      setKnotPart(myknotPart)
-    }
-  }, [
-    props.knotRadius,
-    props.pathBgColor,
-    props.knotBgColor,
-    props.knotBgColorSelected,
-    props.knotBgColorDisabled,
-    props.knotBorder,
-    props.knotBorderColor,
-    props.disabled,
-    props.knots,
-    props.knotRadius,
-    props.knotBgColor,
-    props.knotBgColorSelected,
-    props.knotBgColorDisabled,
-    props.knotBorder,
-    props.knotBorderColor,
-    props.disabled,
-    props.pathStartAngle,
-    props.pathEndAngle,
-    clockPart,
-    data,
-  ])
 
   const focusKnot = (id: string, svgElement: SVGSVGElement | null) => {
     setSelectedKnotId(id)
@@ -242,36 +221,8 @@ export const ClockSlider = (props: IRoundClockProps) => {
             pathBorderColor={pathBorderColor}
           />
           <TickMarks clockPart={clockPart} {...(props as ITicksProps)} />
-          <RopeLine
-            clockPart={clockPart}
-            knotPart={knotPart}
-            left={anchor.left}
-            top={anchor.top}
-            setKnot={refreshKnot}
-            animateOnClick={animateOnClick}
-            animationDuration={animationDuration}
-            disabled={props.disabled}
-            {...(props as IRopeProps)}
-          />
-          {knotPart &&
-            knotPart.knots.map((knot, i) => {
-              return (
-                <KnotDot
-                  key={knot.id}
-                  clockPart={clockPart}
-                  knot={knot}
-                  knotPart={knotPart}
-                  left={anchor.left}
-                  top={anchor.top}
-                  selectedKnotId={selectedKnotId}
-                  setKnot={refreshKnot}
-                  disabled={props.disabled}
-                  keyboardDisabled={props.keyboardDisabled}
-                  knotSVG={props.knotSVG}
-                  mouseWheelDisabled={props.mousewheelDisabled}
-                />
-              )
-            })}
+
+
         </svg>
       )}
     </>

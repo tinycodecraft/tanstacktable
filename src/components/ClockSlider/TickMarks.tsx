@@ -9,15 +9,11 @@ interface ITickMarkProps extends ITicksProps {
 
 export const TickMarks = (props: ITickMarkProps) => {
   const { clockPart, ...restProps } = props
-  const [markPart, setMarkPart] = useState<MarkPart | null>(null)
   const marksProps = restProps as ITicksProps
-
-  useEffect(() => {
-    if (clockPart && marksProps) {
-      const itMarkPart = new MarkPart(clockPart, marksProps)
-      setMarkPart(itMarkPart)
-    }
-  }, [clockPart, marksProps])
+  const markPart= new MarkPart(clockPart, marksProps)
+  useEffect(()=>{
+    console.log(`component tick mark is called`)  
+  },[])
   return (
     <>
       {markPart && markPart.enableTicks && (
