@@ -65,7 +65,7 @@ export class MarkPart {
       
 
       let [x, y] = circleMovement([cx, cy], angleRad, radius)
-      console.log(`the angle of index ${i} = ${angleRad} for angle ${currentAngle} at [${x},${y}] for center [${cx},${cy}]`)
+      console.log(`for clock round ${data.isClosedShape} the angle of index ${i} = ${angleRad} for angle ${currentAngle} at [${x},${y}] for center [${cx},${cy}]`)
 
       const isLonger = ticksSettings.ticksGroupSize !== undefined && i % ticksSettings.ticksGroupSize === 0
 
@@ -98,6 +98,11 @@ export class MarkPart {
           value = data.data[index]
         } else {
           value = setDecimalPlaces(value, data.round)
+          if(data.isClosedShape && i==0 && data.min != data.max)
+          {
+            // try to use max value instead of min value if the tickings around the clock
+            value = data.max;
+          }
         }
 
         markValue = (value ?? '').toString()

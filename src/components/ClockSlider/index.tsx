@@ -70,6 +70,7 @@ export const ClockSlider = (props: IRoundClockProps) => {
     props.step,
     props.arrowStep,
     props.ticksGroupSize,
+    props.ticksAngleShift
   ])
 
   useEffect(() => {
