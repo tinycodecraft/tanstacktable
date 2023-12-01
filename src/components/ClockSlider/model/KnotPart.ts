@@ -63,8 +63,8 @@ export class KnotPart {
         const border_i = valueOr(knot.border, border)
         const borderColor_i = valueOr(knot.borderColor, borderColor)
         const disabled_i = valueOr(knot.disabled, disabled)
-        const angleDeg = knot.value && clock.value2angle(knot.value)
-        let angleAfterStep = angleDeg && getSteppedAngle(angleDeg, clock.stepAngle, clock.angleStart, clock.angleEnd)
+        const angleDeg = clock.value2angle(knot.value!==undefined ? knot.value: clock.data.min)
+        let angleAfterStep = getSteppedAngle(angleDeg, clock.stepAngle, clock.angleStart, clock.angleEnd)
 
         if (angleAfterStep && clock.isClosed && mod(angleAfterStep, 360) === mod(clock.angleEnd, 360)) {
           angleAfterStep = clock.angleStart
