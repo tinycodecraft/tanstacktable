@@ -65,7 +65,7 @@ export class MarkPart {
       
 
       let [x, y] = circleMovement([cx, cy], angleRad, radius)
-      console.log(`for clock round ${data.isClosedShape} the angle of index ${i} = ${angleRad} for angle ${currentAngle} at [${x},${y}] for center [${cx},${cy}]`)
+      
 
       const isLonger = ticksSettings.ticksGroupSize !== undefined && i % ticksSettings.ticksGroupSize === 0
 

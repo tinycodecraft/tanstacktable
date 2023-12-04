@@ -32,7 +32,7 @@ export const ClockSlider = (props: IRoundClockProps) => {
   useEffect(() => {
     if (anchor) {
       const { top, left } = anchor
-      console.log(`the anchor svg is detected!`)
+      console.log(`the anchor svg is detected! ${svgRef.current?.getBoundingClientRect()?.left},${svgRef.current?.getBoundingClientRect()?.top} vs ${left},${top} `)
       const myclockPart = new ClockPart(
         {
           min: numberOr(props.min, RNDCLK_DF_MIN),
@@ -46,7 +46,6 @@ export const ClockSlider = (props: IRoundClockProps) => {
           radius: props.pathRadius,
           thickness: props.pathThickness,
           disabled: props.disabled,
-
         },
         getMaxRadius(props.knots || [], RNDCLK_DF_KNOT_RADIUS, RNDCLK_DF_KNOT_BORDER),
         props.step,
@@ -72,7 +71,7 @@ export const ClockSlider = (props: IRoundClockProps) => {
     props.step,
     props.arrowStep,
     props.ticksGroupSize,
-    props.clockAngleShift
+    props.clockAngleShift,
   ])
 
   useEffect(() => {
@@ -226,6 +225,23 @@ export const ClockSlider = (props: IRoundClockProps) => {
             pathBorderColor={pathBorderColor}
           />
           <TickMarks clockPart={clockPart} {...(props as ITicksProps)} />
+          {knotPart.knots.map((knot) => {
+            return (
+              <KnotDot
+                clockPart={clockPart}
+                knot={knot}
+                knotPart={knotPart}
+                left={anchor.left}
+                top={anchor.top}
+                selectedKnotId={selectedKnotId}
+                setKnot={refreshKnot}
+                disabled={props.disabled}
+                key={knot.id}
+                keyboardDisabled={props.keyboardDisabled}
+                mouseWheelDisabled={props.mousewheelDisabled}
+              />
+            )
+          })}
         </svg>
       )}
     </>
