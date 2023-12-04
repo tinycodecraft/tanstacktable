@@ -138,9 +138,9 @@ export class KnotPart {
 
   public getNewKnots(knotIndex: number, newAngleDeg: number): IKnotInstance[] | null {
     const changed = this._i.knots[knotIndex].angleDeg !== newAngleDeg
-    console.log(`try to find new knot`)
+    // console.log(`try to find new knot`)
     if (changed) {
-      console.log(`the new knots are changed`)
+      // console.log(`the new knots are changed`)
       const newKnots = [...this._i.knots]
       newKnots[knotIndex].prevAngleDeg = this._i.knots[knotIndex].angleDeg
       newKnots[knotIndex].angleDeg = newAngleDeg

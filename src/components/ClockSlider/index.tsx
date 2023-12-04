@@ -22,11 +22,11 @@ export const ClockSlider = (props: IRoundClockProps) => {
 
   const [anchor, setAnchor] = useState<IAnchorProps>({ left: 0, top: 0 })
   const [timerOn, toggleTimer] = useToggle()
-  const { start, clear } = useTimeout(() => {
+  const { start: startAnchor, clear: clearAnchor } = useTimeout(() => {
     if (svgRef.current) {
       console.log(`try time out set anchor for `, svgRef.current)
       setAnchor(svgRef.current?.getBoundingClientRect())
-      clear()
+      clearAnchor()
     }
   }, 1000)
 
@@ -34,7 +34,7 @@ export const ClockSlider = (props: IRoundClockProps) => {
     if (anchor) {
       const { top, left } = anchor
       if (!timerOn) {
-        start()
+        startAnchor()
         const newleft = svgRef.current?.getBoundingClientRect().left
         const newtop =svgRef.current?.getBoundingClientRect().top
         if(top!== newtop || left!==newleft)
