@@ -62,6 +62,7 @@ function App() {
               onChange={setKnots}
               min={0}
               max={12}
+              step={0.2}
               enableTicks={true}
               clockAngleShift={270}
               ticksWidth={3}

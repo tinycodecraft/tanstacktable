@@ -10,29 +10,40 @@ import { ClockFace } from './ClockFace'
 import { TickMarks } from './TickMarks'
 import { RopeLine } from './RopeLine'
 import { KnotDot } from './KnotDot'
+import { useResizeObserver, useTimeout, useToggle } from '@mantine/hooks'
 
 export const ClockSlider = (props: IRoundClockProps) => {
   const [clockPart, setClockPart] = useState<ClockPart | null>(null)
   const [knotPart, setKnotPart] = useState<KnotPart | null>(null)
   const [selectedKnotId, setSelectedKnotId] = useState('')
   const { animateOnClick, animationDuration, pathBgColor, pathBorderColor } = props
-  const svgRef = useRef<SVGSVGElement | null>(null)
+  const [svgRef, svgRect] = useResizeObserver()
   const prevAngleDegRef = useRef<number | null>(null)
 
   const [anchor, setAnchor] = useState<IAnchorProps>({ left: 0, top: 0 })
-
-  const measuredRef = useCallback((node: SVGSVGElement) => {
-    if (node != null) {
-      const { top, left } = node.getBoundingClientRect()
-      setAnchor(node.getBoundingClientRect())
-      svgRef.current = node
-      setAnchor({ left, top })
+  const [timerOn, toggleTimer] = useToggle()
+  const { start, clear } = useTimeout(() => {
+    if (svgRef.current) {
+      console.log(`try time out set `, svgRef.current)
+      setAnchor(svgRef.current?.getBoundingClientRect())
+      clear()
     }
-  }, [])
+  }, 1000)
+
   useEffect(() => {
     if (anchor) {
       const { top, left } = anchor
-      console.log(`the anchor svg is detected! ${svgRef.current?.getBoundingClientRect()?.left},${svgRef.current?.getBoundingClientRect()?.top} vs ${left},${top} `)
+      if (!timerOn) {
+        start()
+        const newleft = svgRef.current?.getBoundingClientRect().left
+        const newtop =svgRef.current?.getBoundingClientRect().top
+        if(top!== newtop || left!==newleft)
+        {
+          console.log(`the newleft : ${newleft}, the newtop : ${newtop}`)
+          toggleTimer()                    
+        }        
+      }
+
       const myclockPart = new ClockPart(
         {
           min: numberOr(props.min, RNDCLK_DF_MIN),
@@ -72,6 +83,7 @@ export const ClockSlider = (props: IRoundClockProps) => {
     props.arrowStep,
     props.ticksGroupSize,
     props.clockAngleShift,
+    svgRect,
   ])
 
   useEffect(() => {
@@ -201,7 +213,7 @@ export const ClockSlider = (props: IRoundClockProps) => {
     <>
       {clockPart && knotPart && (
         <svg
-          ref={measuredRef}
+          ref={svgRef}
           xmlns='http://www.w3.org/2000/svg'
           width={clockPart.size}
           height={clockPart.size}
