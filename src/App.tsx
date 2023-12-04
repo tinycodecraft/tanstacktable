@@ -63,7 +63,7 @@ function App() {
               min={0}
               max={12}
               enableTicks={true}
-              ticksAngleShift={270}
+              clockAngleShift={270}
               ticksWidth={3}
               ticksHeight={10}
               longerTicksHeight={25}

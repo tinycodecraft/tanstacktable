@@ -40,11 +40,13 @@ export const ClockSlider = (props: IRoundClockProps) => {
           border: props.pathBorder,
           data: props.data,
           round: props.round,
+          clockAngleShift: props.clockAngleShift,
           startAngleDeg: props.pathStartAngle,
           endAngleDeg: props.pathEndAngle,
           radius: props.pathRadius,
           thickness: props.pathThickness,
           disabled: props.disabled,
+
         },
         getMaxRadius(props.knots || [], RNDCLK_DF_KNOT_RADIUS, RNDCLK_DF_KNOT_BORDER),
         props.step,
@@ -70,7 +72,7 @@ export const ClockSlider = (props: IRoundClockProps) => {
     props.step,
     props.arrowStep,
     props.ticksGroupSize,
-    props.ticksAngleShift
+    props.clockAngleShift
   ])
 
   useEffect(() => {

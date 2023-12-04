@@ -92,6 +92,10 @@ export interface IRoundClockProps extends IKnotTemplateProps, ITicksProps, IRope
   round?: number
 
   // path -----------------
+
+  // try to shift the internal start end angle
+  clockAngleShift?:number
+
   // A number representing the starting angle of the slider path.
   // The angle is measured in degrees, and the default value = 0.
   pathStartAngle?: number
@@ -268,9 +272,6 @@ export interface IRopeProps {
 
 export interface ITicksProps {
 
-  // tickAngleShift
-  // try to shift the tick around the clock in Degree
-  ticksAngleShift?: number
 
   // A number specifying the total count of ticks
   // to be displayed on the slider.
@@ -477,6 +478,7 @@ export interface IClockCore {
   radius: number
   startAngleDeg: number
   endAngleDeg: number
+  clockAngleShift: number
 }
 
 export interface IRopeInstance extends IClockCore {

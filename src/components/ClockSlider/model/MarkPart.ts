@@ -47,7 +47,7 @@ export class MarkPart {
       showTickValues: valueOr(markTemplate.showTickValues, true),
       tickValuesPrefix: valueOr(markTemplate.tickValuesPrefix,''),
       tickValuesSuffix: valueOr(markTemplate.tickValuesSuffix,''),
-      ticksAngleShift: valueOr(markTemplate.ticksAngleShift,0)
+      
     }
 
     const marks: IMarkProps[] = []
@@ -60,7 +60,7 @@ export class MarkPart {
     }
     const ticksSettings = this._t
     for (let i = 0; i < count; i++) {
-      const currentAngle = mod( clockPart.angleStart + i * oneMarkAngleSize + ticksSettings.ticksAngleShift,360) 
+      const currentAngle = mod( clockPart.angleStart + i * oneMarkAngleSize ,360) 
       const angleRad = convertRange(degreesToRadians(currentAngle), 0, Math.PI * 2, 0, Math.PI) // [0, Math.PI*2] ---> [0, Math.PI]
       
 

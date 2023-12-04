@@ -47,14 +47,15 @@ export class ClockPart  {
     const radius = valueOr(clockInfo.radius, RNDCLK_DF_PATH_RADIUS)
     const thickness = valueOr(clockInfo.thickness, RNDCLK_DF_PATH_THICKNESS)
     const border = valueOr(clockInfo.border, RNDCLK_DF_PATH_BORDER)
+    const clockAngleShift = valueOr(clockInfo.clockAngleShift,0)
     const grossthickness = thickness + border * 2
     const diff = Math.max(0, fixKnotRadius * 2 - grossthickness)
     const size = radius * 2 + grossthickness + diff
     const [cx, cy] = getClockCenter(radius, fixKnotRadius, thickness, border)
     const round = valueOr(clockInfo.round, RNDCLK_DF_ROUND)
 
-    const startAngleDeg = valueOr(clockInfo.startAngleDeg, RNDCLK_DF_PATH_START_ANGLE)
-    let endAngleDeg = valueOr(clockInfo.endAngleDeg, RNDCLK_DF_PATH_END_ANGLE)
+    const startAngleDeg = valueOr(clockInfo.startAngleDeg, RNDCLK_DF_PATH_START_ANGLE)+ clockAngleShift
+    let endAngleDeg = valueOr(clockInfo.endAngleDeg, RNDCLK_DF_PATH_END_ANGLE) + clockAngleShift
     if (endAngleDeg < startAngleDeg) {
       endAngleDeg += 360
     }
@@ -67,13 +68,15 @@ export class ClockPart  {
     // create the strock
 
     this._i = {
-      arrowStepAngleDeg,
+      
       border,
       cx,
       cy,
       data,
       disabled,
+      startAngleDeg,
       endAngleDeg,
+      clockAngleShift,
       isClosedShape,
       left,
       max,
@@ -81,8 +84,9 @@ export class ClockPart  {
       radius,
       round,
       size,
-      startAngleDeg,
+      
       stepAngleDeg,
+      arrowStepAngleDeg,
       thickness,
       top,
     }
