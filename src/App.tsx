@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import './App.css'
 
@@ -12,6 +12,9 @@ import { ClockSlider } from './components/ClockSlider'
 
 function App() {
   const [knots, setKnots] = useState<IKnotProps[]>([{ value: 0 }])
+  useEffect(()=> {
+    console.log(`parent level , the knots changed...`);
+  },[knots])
   return (
     <div className='App'>
       <header className='App-header'>
@@ -63,7 +66,7 @@ function App() {
               min={0}
               max={12}
               step={0.2}
-              
+              ropeBgColor={'#e23d31d2'}
               pathBgColor={'#26252b7b'}
               pathBorder={3}
               pathBorderColor={'#5ad13579'}

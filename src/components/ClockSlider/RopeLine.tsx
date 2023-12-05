@@ -9,7 +9,7 @@ import { getAnimationProgressAngle, getMouseInAngle, getStrokeColor } from 'src/
 import { valueOr } from 'src/config/methods'
 
 interface IRopeLineProps extends IRopeProps, IAnimateProps {
-  disabled?: boolean  
+  disabled?: boolean
   clockPart: ClockPart
   knotPart: KnotPart
   top: number
@@ -42,7 +42,16 @@ export const RopeLine = (props: IRopeLineProps) => {
   const animationSourceDegrees = useRef(0)
   const animationTargetDegrees = useRef(0)
   const [cx, cy, radius] = clockPart.clockCoordinates
-  const [stroke, setStroke] = useState<IStrokeProps>(ropePart?.stroke ?? clockPart.stroke)
+  const [stroke, setStroke] = useState<IStrokeProps|null>( clockPart && knotPart && new RopePart(clockPart.core, knotPart.knots).stroke)
+
+  // console.log(`stroke ${new RopePart(clockPart.core, knotPart.knots).stroke.strokeDasharray} against ${stroke?.strokeDasharray}`)
+
+  const measuredRef = useCallback((node: SVGCircleElement)=> {
+    if(node!==null)
+    {
+      console.log(`rope part measure here!!`,node)
+    }
+  },[knotPart])
 
   const onMouseUp = () => {
     window.removeEventListener('mousemove', onValueChange)
@@ -84,8 +93,8 @@ export const RopeLine = (props: IRopeLineProps) => {
 
   const onClick = useCallback(
     (evt: ReactMouseEvent) => {
-      console.log(` top value is ${top}, left value is ${left}`)
-      if (!clockPart || clockPart.disabled || (animation && animation.isAnimating()) ) return
+      
+      if (!clockPart || clockPart.disabled || (animation && animation.isAnimating())) return
 
       const degrees = getMouseInAngle([left, top], [evt.clientX, evt.clientY], clockPart.clockCoordinates)
 
@@ -104,20 +113,26 @@ export const RopeLine = (props: IRopeLineProps) => {
     },
     [top, left, clockPart, knotPart],
   )
-
   useEffect(() => {
-    setStrokeColor(getStrokeColor(mouseOvered,disabled, ropeBgColorDisabled, ropeBgColor,  ropeBgColorHover))
-  }, [disabled, ropeBgColorDisabled, ropeBgColor, ropeBgColorHover, mouseOvered])
+    // console.log(`the rope line render!,see radius of first knot  ${knotPart.knots[0].radius} with stroke color ${strokeColor}`)
 
-  useEffect(() => {
     if (clockPart && knotPart) {
-      console.log(`set the rope ...`)
+      // it means that knot part object does not change , only the fields changed
+      console.log(`set the rope ... && show rope ${valueOr( !hideRope,true)}`)
       const itRopePart = new RopePart(clockPart.core, knotPart.knots)
       setRopePart(itRopePart)
       setStroke(itRopePart.stroke)
-
     }
-  }, [clockPart, knotPart])
+  }, [clockPart, knotPart.knots])
+
+  useEffect(() => {
+    setStrokeColor(getStrokeColor(mouseOvered, disabled, ropeBgColorDisabled, ropeBgColor, ropeBgColorHover))
+    if (ropePart) {
+      console.log(`see rope part changed!`)
+      setStroke(ropePart.stroke)
+    }
+  }, [disabled, ropeBgColorDisabled, ropeBgColor, ropeBgColorHover, mouseOvered, knotPart])
+
   useEffect(
     () => {
       if (animation) {
@@ -151,15 +166,16 @@ export const RopeLine = (props: IRopeLineProps) => {
 
   return (
     <>
-      {valueOr(hideRope, false) && (
+      {valueOr(!hideRope, true) && (
         <circle
+          ref={measuredRef}
           data-type='connection'
           className='mz-round-slider-connection'
           cx={cx}
           cy={cy}
           r={radius}
-          strokeDasharray={stroke.strokeDasharray}
-          strokeDashoffset={stroke.strokeOffset}
+          strokeDasharray={stroke?.strokeDasharray}
+          strokeDashoffset={stroke?.strokeOffset}
           stroke={strokeColor}
           strokeWidth={clockPart.thickness}
           fill='none'

@@ -114,10 +114,7 @@ const getSteppedAngle = (angleDeg: number, step: number, startAngle: number, end
 
 const getMaxRadius = (knotCores: IKnotCore[], radiusDefault: number, borderDefault: number): number => {
   if (knotCores.length <= 0) return 0
-  for(let i = 0; i< knotCores.length; i++)
-  {
-    console.log(`knot ${i} has radius ${valueOr( knotCores[i].radius,radiusDefault)} plus border ${valueOr(knotCores[i].border,borderDefault)}`)
-  }
+
   return knotCores
     .map((e) => valueOr(e.radius, radiusDefault) + valueOr(e.border, borderDefault) / 2)
     .reduce((prev, cur) => Math.max(prev, cur), -Infinity)

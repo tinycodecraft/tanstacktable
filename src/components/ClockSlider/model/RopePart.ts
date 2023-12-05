@@ -37,6 +37,8 @@ export class RopePart  {
     const strokeDasharray = (knotAnglesInDiff / 360) * circumference
     const complement = circumference - strokeDasharray
 
+    // console.log(`the stroke offset ${strokeOffset} with dasharray ${[strokeDasharray, complement].join(' ')}`)
+
     this._s = {
       strokeDasharray: [strokeDasharray, complement].join(' '),
       strokeOffset: strokeOffset,

@@ -24,32 +24,36 @@ export const ClockSlider = (props: IRoundClockProps) => {
   const [timerOn, toggleTimer] = useToggle()
   const { start: startAnchor, clear: clearAnchor } = useTimeout(() => {
     if (svgRef.current) {
-      console.log(`try time out set anchor for `, svgRef.current)
+      
       setAnchor(svgRef.current?.getBoundingClientRect())
       clearAnchor()
     }
   }, 1000)
 
+  useEffect(()=> {
+    console.log(`inner parent level, knot part changed!`)
+    
+  },[knotPart])
   useEffect(() => {
     if (anchor) {
       const { top, left } = anchor
-      if (!timerOn) {
+      if (!timerOn && !(top || left)) {
         startAnchor()
         const newleft = svgRef.current?.getBoundingClientRect().left
         const newtop = svgRef.current?.getBoundingClientRect().top
         if (top !== newtop || left !== newleft) {
-          console.log(`the newleft : ${newleft}, the newtop : ${newtop}`)
+          
           toggleTimer()
         }
       }
-
+      
       // knotPart is not formed yet, so max knotradius need knottemplate values from props
       const maxKnotRadius = getMaxRadius(
         props.knots || [],
         valueOr(props.knotRadius, RNDCLK_DF_KNOT_RADIUS),
         valueOr(props.knotBorder, RNDCLK_DF_KNOT_BORDER),
       )
-      console.log(`the max knot radius = ${maxKnotRadius}`)
+      
       const myclockPart = new ClockPart(
         {
           min: numberOr(props.min, RNDCLK_DF_MIN),
@@ -243,6 +247,21 @@ export const ClockSlider = (props: IRoundClockProps) => {
             pathBorderColor={pathBorderColor}
           />
           <TickMarks clockPart={clockPart} {...(props as ITicksProps)} />
+          <RopeLine
+            clockPart={clockPart}
+            knotPart={knotPart}
+            left={anchor.left}
+            top={anchor.top}
+            setKnot={refreshKnot}
+            animateOnClick={props.animateOnClick}
+            animationDuration={props.animationDuration}
+            disabled={props.disabled}
+            hideRope={props.hideRope}
+            rangeDragging={props.rangeDragging}
+            ropeBgColor={props.ropeBgColor}
+            ropeBgColorDisabled={props.ropeBgColorDisabled}
+            ropeBgColorHover={props.ropeBgColorHover}
+          />
 
           {knotPart.knots.map((knot) => {
             return (
