@@ -8,7 +8,7 @@ export class RopePart  {
   _s: IStrokeProps
   constructor(rope: IClockCore, knots: IKnotInstance[]) {
     
-    this._i = { ...rope, knots }
+    this._i = { ...rope, knots: [...knots] }
     // save clock-core path angles
     const pathStartAngle = this._i.startAngleDeg
     const pathEndAngle = this._i.endAngleDeg

@@ -11,7 +11,7 @@ import {
   v2Distance,
   v2Sub,
 } from 'mz-math'
-import { IKnotCore, IKnotInstance, IKnotProps, IStrokeProps } from './types'
+import { IClockCore, IKnotCore, IKnotInstance, IKnotProps, IStrokeProps } from './types'
 import { valueOr } from './methods'
 import { ClockPart } from 'src/components/ClockSlider/model/ClockPart'
 import { RNDCLK_DF_ROPE_BG_COLOR, RNDCLK_DF_ROPE_BG_COLOR_DISABLED } from './constants'
@@ -94,6 +94,44 @@ const createStroke = (startDeg: number, endDeg: number, radius: number): IStroke
     strokeDasharray: [strokeDasharray, complement].join(' '),
     strokeOffset,
   }
+}
+
+const createStrokeFromKnots=(clockcore: IClockCore, knots: IKnotInstance[]): IStrokeProps => {
+  let knotAngleStart = clockcore.startAngleDeg
+  let knotAngleEnd = clockcore.endAngleDeg
+  if(knots.length ===1)
+  {
+    knotAngleEnd = knots[0].angleDeg
+
+  }
+  else {
+    knotAngleStart = knots[0].angleDeg
+    knotAngleEnd =knots[knots.length-1].angleDeg
+  }
+  const startendAngles = {start: knotAngleStart, end: knotAngleEnd}
+  if(knotAngleStart > knotAngleEnd)
+  {
+    knotAngleEnd+=360
+  }
+  const pathAnglesInDiff = getAnglesInDiff(clockcore.startAngleDeg,clockcore.endAngleDeg)
+  let knotAnglesInDiff = getAnglesInDiff(knotAngleStart,knotAngleEnd)
+  if(knotAnglesInDiff > pathAnglesInDiff)
+  {
+    knotAnglesInDiff = 360 - knotAnglesInDiff
+    startendAngles.start = knotAngleEnd
+    startendAngles.end = knotAngleStart
+  }
+
+  const circumference = 2 * Math.PI * clockcore.radius
+  const strokeOffset = -(startendAngles.start / 360) * circumference
+  const strokeDasharray = (knotAnglesInDiff / 360) * circumference
+  const complement = circumference - strokeDasharray
+
+  return {
+    strokeDasharray: [strokeDasharray, complement].join(' '),
+    strokeOffset: strokeOffset,
+  }    
+  
 }
 
 const getAnglesInDiff = (startAngle: number, endAngle: number): number => {
@@ -184,6 +222,7 @@ export {
   getDotFillColor,
   getStrokeColor,
   getKnotsProps,
+  createStrokeFromKnots,
   createStroke,
   checkAngleInArc,
   getAnimationProgressAngle,

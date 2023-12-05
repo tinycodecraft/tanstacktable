@@ -5,7 +5,7 @@ import { KnotPart } from './model/KnotPart'
 import { mod } from 'mz-math'
 import { RNDCLK_DF_KNOT_BORDER, RNDCLK_DF_KNOT_RADIUS, RNDCLK_DF_MAX, RNDCLK_DF_MIN, OUTLINENONE_CSS } from 'src/config/constants'
 import { numberOr, valueOr } from 'src/config/methods'
-import { checkAngleInArc, getClosestEdge, getKnotsProps, getMaxRadius, getSteppedAngle } from 'src/config/geometries'
+import { checkAngleInArc, createStrokeFromKnots, getClosestEdge, getKnotsProps, getMaxRadius, getSteppedAngle } from 'src/config/geometries'
 import { ClockFace } from './ClockFace'
 import { TickMarks } from './TickMarks'
 import { RopeLine } from './RopeLine'
@@ -32,7 +32,7 @@ export const ClockSlider = (props: IRoundClockProps) => {
 
   useEffect(()=> {
     console.log(`inner parent level, knot part changed!`)
-    
+
   },[knotPart])
   useEffect(() => {
     if (anchor) {
@@ -206,9 +206,9 @@ export const ClockSlider = (props: IRoundClockProps) => {
   const renewKnots = (itKnots: KnotPart, itClock: ClockPart, knot: IKnotInstance, newAngleDeg: number) => {
     if (itKnots !== null && itClock !== null) {
       const newKnots = itKnots.getNewKnots(knot.index, newAngleDeg)
-      if (newKnots !== null) {
-        itKnots.knots = newKnots
-        setKnotPart(itKnots)
+      if (newKnots !== null) {      
+        console.log(`inner parent update knotpart...`)  
+        setKnotPart(Object.assign( Object.create(itKnots),{ knots: newKnots, stroke: createStrokeFromKnots(itClock.core,newKnots)}))
         if (typeof props.onChange === 'function') {
           const newKnotProps = getKnotsProps(itClock, newKnots)
           props.onChange(newKnotProps)

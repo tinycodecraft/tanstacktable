@@ -1,8 +1,8 @@
 /* eslint-disable camelcase */
-import { IKnotBagInstance, IKnotInstance, IKnotProps, IKnotTemplateProps } from 'src/config/types'
+import { IKnotBagInstance, IKnotInstance, IKnotProps, IKnotTemplateProps, IStrokeProps } from 'src/config/types'
 import { ClockPart } from './ClockPart'
 import { Vector2, Vector3, circleMovement, convertRange, degreesToRadians, mod, v2Distance } from 'mz-math'
-import { noEmptyOr, valueOr } from 'src/config/methods'
+import { noEmptyOr, numberOr, valueOr } from 'src/config/methods'
 import {
   RNDCLK_DF_KNOT_BG_COLOR,
   RNDCLK_DF_KNOT_BG_COLOR_DISABLED,
@@ -11,11 +11,13 @@ import {
   RNDCLK_DF_KNOT_BORDER_COLOR,
   RNDCLK_DF_KNOT_RADIUS,
 } from 'src/config/constants'
-import { getSteppedAngle } from 'src/config/geometries'
+import { createStrokeFromKnots, getAnglesInDiff, getSteppedAngle } from 'src/config/geometries'
+
 
 export class KnotPart {
   _i: IKnotBagInstance
   _t: Required<IKnotTemplateProps>
+  _s: IStrokeProps
   constructor(clock: ClockPart, knots: IKnotProps[], knotTemplate: IKnotTemplateProps) {
     const knotvalues: IKnotInstance[] = []
     const angle = mod(clock.angleStart, 360)
@@ -85,8 +87,13 @@ export class KnotPart {
           disabled: disabled_i,
           ariaLabel: knot.ariaLabel,
         })
+
+
       }
+
     }
+
+    this._s =createStrokeFromKnots(clock.core,knotvalues)
 
     this._i = {
       knots: knotvalues,
@@ -150,6 +157,31 @@ export class KnotPart {
     return null
   }
 
+  public getMostApartKnots(pathStartAngle: number): [IKnotInstance, IKnotInstance] | null {
+    if (!this._i.knots || this._i.knots.length <= 0) return null
+    let minDistance = undefined
+    let maxDistance = undefined
+    let beginKnot = null
+    let endKnot = null
+    for (const knot of this._i.knots) {
+      const distance = getAnglesInDiff(pathStartAngle, knot.angleDeg)
+
+      if (minDistance === undefined || distance < minDistance) {
+        beginKnot = knot
+        minDistance = distance
+      }
+
+      if (maxDistance === undefined || distance > maxDistance) {
+        endKnot = knot
+        maxDistance = distance
+      }
+    }
+
+    if (beginKnot === null || endKnot === null) return null
+
+    return [beginKnot, endKnot]
+  }  
+
   public set knots(newKnots: IKnotInstance[]) {
     this._i = {
       knots: [...newKnots],
@@ -164,4 +196,12 @@ export class KnotPart {
   public get knotTemplate(): Required<IKnotTemplateProps> {
     return { ...this._t }
   }
+
+  public get stroke(): IStrokeProps {
+    return this._s
+  }  
+  public set stroke(value: IStrokeProps) {
+    this._s = value;
+  }
+
 }
