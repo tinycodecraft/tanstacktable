@@ -103,7 +103,7 @@ export const RopeLine = (props: IRopeLineProps) => {
     },
     [top, left, clockPart, knotPart],
   )
-
+  // clockpart changed when top left changed
   useEffect(() => {
     setStrokeColor(getStrokeColor(mouseOvered, disabled, ropeBgColorDisabled, ropeBgColor, ropeBgColorHover))
     if (knotPart) {
