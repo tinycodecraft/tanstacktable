@@ -47,7 +47,7 @@ export const ClockFace = (props: IClockFaceProps) => {
       
       if (!clockPart || clockPart.disabled || (animation && animation.isAnimating())) return
 
-      console.log(` top value is ${top}, left value is ${left} having mouse pos ${evt.clientX} , ${evt.clientY} and border ${clockPart.border}`)
+      console.log(`clock face click event: top value is ${top}, left value is ${left} having mouse pos ${evt.clientX} , ${evt.clientY} and border ${clockPart.border}`)
 
       const degrees = getMouseInAngle([left, top], [evt.clientX, evt.clientY], clockPart.clockCoordinates)
 

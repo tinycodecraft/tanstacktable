@@ -30,10 +30,7 @@ export const ClockSlider = (props: IRoundClockProps) => {
     }
   }, 1000)
 
-  useEffect(()=> {
-    console.log(`inner parent level, knot part changed!`)
 
-  },[knotPart])
   useEffect(() => {
     if (anchor) {
       const { top, left } = anchor
@@ -207,7 +204,7 @@ export const ClockSlider = (props: IRoundClockProps) => {
     if (itKnots !== null && itClock !== null) {
       const newKnots = itKnots.getNewKnots(knot.index, newAngleDeg)
       if (newKnots !== null) {      
-        console.log(`inner parent update knotpart...`)  
+        console.log(`slider wrapper update knotpart...`)  
         setKnotPart(Object.assign( Object.create(itKnots),{ knots: newKnots, stroke: createStrokeFromKnots(itClock.core,newKnots)}))
         if (typeof props.onChange === 'function') {
           const newKnotProps = getKnotsProps(itClock, newKnots)
