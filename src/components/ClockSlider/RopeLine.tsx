@@ -85,7 +85,7 @@ export const RopeLine = (props: IRopeLineProps) => {
   const onClick = useCallback(
     (evt: ReactMouseEvent) => {
       console.log(` top value is ${top}, left value is ${left}`)
-      if (!clockPart || clockPart.disabled || (animation && animation.isAnimating()) || !top || !left) return
+      if (!clockPart || clockPart.disabled || (animation && animation.isAnimating()) ) return
 
       const degrees = getMouseInAngle([left, top], [evt.clientX, evt.clientY], clockPart.clockCoordinates)
 
@@ -111,6 +111,7 @@ export const RopeLine = (props: IRopeLineProps) => {
 
   useEffect(() => {
     if (clockPart && knotPart) {
+      console.log(`set the rope ...`)
       const itRopePart = new RopePart(clockPart.core, knotPart.knots)
       setRopePart(itRopePart)
       setStroke(itRopePart.stroke)

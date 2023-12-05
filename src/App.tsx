@@ -63,6 +63,15 @@ function App() {
               min={0}
               max={12}
               step={0.2}
+              
+              pathBgColor={'#26252b7b'}
+              pathBorder={3}
+              pathBorderColor={'#5ad13579'}
+              knotBgColorHover={'#e23d31d2'}
+              knotBorder={10}
+              knotBorderColor={'#3151e2d2'}
+              knotBgColor={'#e2df31d2'}
+              knotBgColorSelected={'#b8b527d2'}
               enableTicks={true}
               clockAngleShift={270}
               ticksWidth={3}

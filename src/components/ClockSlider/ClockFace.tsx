@@ -39,13 +39,15 @@ export const ClockFace = (props: IClockFaceProps) => {
   const animationTargetDegrees = useRef(0)
   const { strokeDasharray, strokeOffset } = clockPart.stroke
   const [cx, cy, radius] = clockPart.clockCoordinates
+  
+  // Please note that it is re-render every knotpart changed
 
   const onClick = useCallback(
     (evt: React.MouseEvent<SVGAElement, MouseEvent>) => {
       
       if (!clockPart || clockPart.disabled || (animation && animation.isAnimating())) return
 
-      console.log(` top value is ${top}, left value is ${left} having mouse pos ${evt.clientX} , ${evt.clientY}`)
+      console.log(` top value is ${top}, left value is ${left} having mouse pos ${evt.clientX} , ${evt.clientY} and border ${clockPart.border}`)
 
       const degrees = getMouseInAngle([left, top], [evt.clientX, evt.clientY], clockPart.clockCoordinates)
 
@@ -64,6 +66,7 @@ export const ClockFace = (props: IClockFaceProps) => {
     },
     [top, left, knotPart, clockPart],
   )
+
   useEffect(
     () => {
       if (animation) {

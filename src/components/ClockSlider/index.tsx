@@ -4,7 +4,7 @@ import { ClockPart } from './model/ClockPart'
 import { KnotPart } from './model/KnotPart'
 import { mod } from 'mz-math'
 import { RNDCLK_DF_KNOT_BORDER, RNDCLK_DF_KNOT_RADIUS, RNDCLK_DF_MAX, RNDCLK_DF_MIN, OUTLINENONE_CSS } from 'src/config/constants'
-import { numberOr } from 'src/config/methods'
+import { numberOr, valueOr } from 'src/config/methods'
 import { checkAngleInArc, getClosestEdge, getKnotsProps, getMaxRadius, getSteppedAngle } from 'src/config/geometries'
 import { ClockFace } from './ClockFace'
 import { TickMarks } from './TickMarks'
@@ -36,14 +36,20 @@ export const ClockSlider = (props: IRoundClockProps) => {
       if (!timerOn) {
         startAnchor()
         const newleft = svgRef.current?.getBoundingClientRect().left
-        const newtop =svgRef.current?.getBoundingClientRect().top
-        if(top!== newtop || left!==newleft)
-        {
+        const newtop = svgRef.current?.getBoundingClientRect().top
+        if (top !== newtop || left !== newleft) {
           console.log(`the newleft : ${newleft}, the newtop : ${newtop}`)
-          toggleTimer()                    
-        }        
+          toggleTimer()
+        }
       }
 
+      // knotPart is not formed yet, so max knotradius need knottemplate values from props
+      const maxKnotRadius = getMaxRadius(
+        props.knots || [],
+        valueOr(props.knotRadius, RNDCLK_DF_KNOT_RADIUS),
+        valueOr(props.knotBorder, RNDCLK_DF_KNOT_BORDER),
+      )
+      console.log(`the max knot radius = ${maxKnotRadius}`)
       const myclockPart = new ClockPart(
         {
           min: numberOr(props.min, RNDCLK_DF_MIN),
@@ -58,7 +64,7 @@ export const ClockSlider = (props: IRoundClockProps) => {
           thickness: props.pathThickness,
           disabled: props.disabled,
         },
-        getMaxRadius(props.knots || [], RNDCLK_DF_KNOT_RADIUS, RNDCLK_DF_KNOT_BORDER),
+        maxKnotRadius,
         props.step,
         props.arrowStep,
         top,
@@ -237,6 +243,7 @@ export const ClockSlider = (props: IRoundClockProps) => {
             pathBorderColor={pathBorderColor}
           />
           <TickMarks clockPart={clockPart} {...(props as ITicksProps)} />
+
           {knotPart.knots.map((knot) => {
             return (
               <KnotDot
