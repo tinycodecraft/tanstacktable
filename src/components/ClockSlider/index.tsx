@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { IAnchorProps, IData, IKnotInstance, IRopeProps, IRoundClockProps, ITicksProps } from 'src/config/types'
 import { ClockPart } from './model/ClockPart'
 import { KnotPart } from './model/KnotPart'
-import { mod } from 'mz-math'
+import { Vector2, mod } from 'mz-math'
 import { RNDCLK_DF_KNOT_BORDER, RNDCLK_DF_KNOT_RADIUS, RNDCLK_DF_MAX, RNDCLK_DF_MIN, OUTLINENONE_CSS } from 'src/config/constants'
 import { numberOr, valueOr } from 'src/config/methods'
 import { checkAngleInArc, createStrokeFromKnots, getClosestEdge, getKnotsProps, getMaxRadius, getSteppedAngle } from 'src/config/geometries'
@@ -11,10 +11,13 @@ import { TickMarks } from './TickMarks'
 import { RopeLine } from './RopeLine'
 import { KnotDot } from './KnotDot'
 import { useResizeObserver, useTimeout, useToggle } from '@mantine/hooks'
+import { ReactComponent as ClockHandleSVG } from './ClockHandle.svg'
 
 export const ClockSlider = (props: IRoundClockProps) => {
   const [clockPart, setClockPart] = useState<ClockPart | null>(null)
+  const [center, setCenter] = useState<Vector2 | null>(null)
   const [knotPart, setKnotPart] = useState<KnotPart | null>(null)
+  const [knotAngle, setKnotAngle] = useState<number>(0)
   const [selectedKnotId, setSelectedKnotId] = useState('')
   const { animateOnClick, animationDuration, pathBgColor, pathBorderColor } = props
   const [svgRef, svgRect] = useResizeObserver()
@@ -24,12 +27,10 @@ export const ClockSlider = (props: IRoundClockProps) => {
   const [timerOn, toggleTimer] = useToggle()
   const { start: startAnchor, clear: clearAnchor } = useTimeout(() => {
     if (svgRef.current) {
-      
       setAnchor(svgRef.current?.getBoundingClientRect())
       clearAnchor()
     }
   }, 1000)
-
 
   useEffect(() => {
     if (anchor) {
@@ -39,18 +40,17 @@ export const ClockSlider = (props: IRoundClockProps) => {
         const newleft = svgRef.current?.getBoundingClientRect().left
         const newtop = svgRef.current?.getBoundingClientRect().top
         if (top !== newtop || left !== newleft) {
-          
           toggleTimer()
         }
       }
-      
+
       // knotPart is not formed yet, so max knotradius need knottemplate values from props
       const maxKnotRadius = getMaxRadius(
         props.knots || [],
         valueOr(props.knotRadius, RNDCLK_DF_KNOT_RADIUS),
         valueOr(props.knotBorder, RNDCLK_DF_KNOT_BORDER),
       )
-      
+
       const myclockPart = new ClockPart(
         {
           min: numberOr(props.min, RNDCLK_DF_MIN),
@@ -71,11 +71,13 @@ export const ClockSlider = (props: IRoundClockProps) => {
         top,
         left,
       )
-
+      setCenter([myclockPart.core.cx, myclockPart.core.cy])
       setClockPart(myclockPart)
+      
 
       const myknotPart = new KnotPart(myclockPart, props.knots || [], props)
       setKnotPart(myknotPart)
+      setKnotAngle(myknotPart.knots[0].angleDeg-(props.clockAngleShift ?? 0))
     }
   }, [
     anchor,
@@ -203,9 +205,11 @@ export const ClockSlider = (props: IRoundClockProps) => {
   const renewKnots = (itKnots: KnotPart, itClock: ClockPart, knot: IKnotInstance, newAngleDeg: number) => {
     if (itKnots !== null && itClock !== null) {
       const newKnots = itKnots.getNewKnots(knot.index, newAngleDeg)
-      if (newKnots !== null) {      
-        console.log(`inside slider wrapper : update knotpart...`)  
-        setKnotPart(Object.assign( Object.create(itKnots),{ knots: newKnots, stroke: createStrokeFromKnots(itClock.core,newKnots)}))
+      if (newKnots !== null) {
+        console.log(`inside slider wrapper : update knotpart... having knot first angle ${newKnots[0].angleDeg}`)
+        setKnotPart(Object.assign(Object.create(itKnots), { knots: newKnots, stroke: createStrokeFromKnots(itClock.core, newKnots) }))
+
+        setKnotAngle(newKnots[0].angleDeg - (props.clockAngleShift ?? 0))
         if (typeof props.onChange === 'function') {
           const newKnotProps = getKnotsProps(itClock, newKnots)
           props.onChange(newKnotProps)
@@ -259,6 +263,14 @@ export const ClockSlider = (props: IRoundClockProps) => {
             ropeBgColorDisabled={props.ropeBgColorDisabled}
             ropeBgColorHover={props.ropeBgColorHover}
           />
+          {center && (
+            <g transform={`rotate(${knotAngle},${center[0]},${center[1]})`}>
+            <g transform={`scale(0.5,0.5) translate(${center[0]},20)`}>
+              <ClockHandleSVG  />              
+            </g>
+
+            </g>
+          )}
 
           {knotPart.knots.map((knot) => {
             return (
