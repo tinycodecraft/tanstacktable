@@ -84,7 +84,7 @@ export const RopeLine = (props: IRopeLineProps) => {
   const onClick = useCallback(
     (evt: ReactMouseEvent) => {
       if (!clockPart || clockPart.disabled || (animation && animation.isAnimating())) return
-      console.log(`rope line click event ...`)
+      console.log(`inside RopeLine : click event ...`)
 
       const degrees = getMouseInAngle([left, top], [evt.clientX, evt.clientY], clockPart.clockCoordinates)
 

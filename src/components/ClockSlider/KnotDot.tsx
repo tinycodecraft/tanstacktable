@@ -109,7 +109,7 @@ export const KnotDot = (props: IKnotDotProps) => {
     const value = clockPart.angle2value(knot.angleDeg)
     setKnotValue(value === undefined ? '' : value.toString())
     // it seems the knot part is updated
-    console.log(`the knot angle changed!`)
+    console.log(`inside KnotDot : the knot angle changed!`)
 
     const angleRad = convertRange(degreesToRadians(knot.angleDeg), 0, Math.PI * 2, 0, Math.PI)
     const knotCenter = circleMovement([cx, cy], angleRad, radius)
