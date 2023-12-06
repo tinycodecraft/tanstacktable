@@ -415,11 +415,22 @@ export interface IKnotProps extends IKnotCore {
   // Default value = undefined.
   ariaLabel?: string
 }
-
-export interface IKnotInstance extends Omit<Required<IKnotProps>, 'value|ariaLabel'> {
-  id: string
-  index: number
+interface IAngleInfo {
   angleDeg: number
+  index: number
+}
+interface KnotState {
+  knots: IAngleInfo[]
+  count: number
+  push: (newknot: IAngleInfo,isOkay?: (result:boolean)=> void) => void
+  peek: (index: number) => IAngleInfo|null
+  isInbound: (newknot: IAngleInfo) => boolean
+  noMove: (newknot: IAngleInfo) => boolean
+  getNewIndex: () => number
+}
+
+export interface IKnotInstance extends Omit<Required<IKnotProps>, 'value|ariaLabel'>,IAngleInfo {
+  id: string
   prevAngleDeg: number
   value?: string | number
   ariaLabel?: string

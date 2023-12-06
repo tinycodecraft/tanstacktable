@@ -114,14 +114,16 @@ const newPerson = (): Person => {
     visits: faker.datatype.number(1000),
     progress: faker.datatype.number(100),
     since: faker.date.past(20),
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     status: faker.helpers.shuffle<Person['status']>(['relationship', 'complicated', 'single'])[0]!,
   }
 }
 
 const makeData = (...lens: number[]) => {
   const makeDataLevel = (depth = 0): Person[] => {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const len = lens[depth]!
-    return range(len).map((d): Person => {
+    return range(len).map((): Person => {
       return {
         ...newPerson(),
         subRows: lens[depth + 1] ? makeDataLevel(depth + 1) : undefined,

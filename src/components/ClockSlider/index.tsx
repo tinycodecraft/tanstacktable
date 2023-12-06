@@ -12,6 +12,7 @@ import { RopeLine } from './RopeLine'
 import { KnotDot } from './KnotDot'
 import { useResizeObserver, useTimeout, useToggle } from '@mantine/hooks'
 import { ReactComponent as ClockHandleSVG } from './ClockHandle.svg'
+import { useKnotStore } from './model/useKnotStore'
 
 export const ClockSlider = (props: IRoundClockProps) => {
   const [clockPart, setClockPart] = useState<ClockPart | null>(null)
@@ -22,6 +23,9 @@ export const ClockSlider = (props: IRoundClockProps) => {
   const { animateOnClick, animationDuration, pathBgColor, pathBorderColor } = props
   const [svgRef, svgRect] = useResizeObserver()
   const prevAngleDegRef = useRef<number | null>(null)
+  const { push,peek,isInbound, noMove,getNewIndex} = useKnotStore()
+  
+
 
   const [anchor, setAnchor] = useState<IAnchorProps>({ left: 0, top: 0 })
   // const [timerOn, toggleTimer] = useToggle()
@@ -133,6 +137,29 @@ export const ClockSlider = (props: IRoundClockProps) => {
   const refreshKnot = (itClock: ClockPart, itKnots: KnotPart, knot: IKnotInstance, newAngleDeg: number, isdisabled?: boolean): void => {
     if (!isdisabled && itClock !== null && itKnots !== null && knot !== null && !knot.disabled) {
       newAngleDeg = getSteppedAngle(newAngleDeg, itClock.stepAngle, itClock.angleStart, itClock.angleEnd)
+      const tmpKnotIndex = getNewIndex()
+      const tmpKnot ={angleDeg: newAngleDeg, index: tmpKnotIndex }
+      if(getNewIndex() ==0)
+      {        
+        push(tmpKnot)
+        console.log(`zero index`)
+      }
+      else {
+        const backing = isInbound(tmpKnot)
+        const NotMoved = noMove(tmpKnot)
+        
+        if(NotMoved)
+        {
+          console.log(`the clock is not moving!`)
+        }
+        else{
+          console.log(`the clock is backing : ${backing}`)          
+          push(tmpKnot)
+          console.log(`the new knot move to ${peek(tmpKnotIndex)?.angleDeg} with index ${tmpKnotIndex}`)
+        }
+      }
+
+
       if (itClock.isClosed && mod(newAngleDeg, 360) === mod(itClock.angleEnd, 360)) {
         newAngleDeg = itClock.angleStart
       }
@@ -215,7 +242,7 @@ export const ClockSlider = (props: IRoundClockProps) => {
     if (itKnots !== null && itClock !== null) {
       const newKnots = itKnots.getNewKnots(knot.index, newAngleDeg)
       if (newKnots !== null) {
-        console.log(`inside slider wrapper : update knotpart... having knot first angle ${newKnots[0].angleDeg}`)
+        
         setKnotPart(Object.assign(Object.create(itKnots), { knots: newKnots, stroke: createStrokeFromKnots(itClock.core, newKnots) }))
 
         setKnotAngle(newKnots[0].angleDeg - (props.clockAngleShift ?? 0))
