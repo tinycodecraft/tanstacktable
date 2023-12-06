@@ -28,13 +28,8 @@ export const ClockSlider = (props: IRoundClockProps) => {
 
 
   const [anchor, setAnchor] = useState<IAnchorProps>({ left: 0, top: 0 })
-  // const [timerOn, toggleTimer] = useToggle()
-  // const { start: startAnchor, clear: clearAnchor } = useTimeout(() => {
-  //   if (svgRef.current) {
-  //     setAnchor(svgRef.current?.getBoundingClientRect())
-  //     clearAnchor()
-  //   }
-  // }, 1000)
+
+  // useMutationObserver is more stable way to get anchor
 
   useMutationObserver(svgRef, () => {
     if (svgRef.current) {
@@ -49,14 +44,7 @@ export const ClockSlider = (props: IRoundClockProps) => {
   useEffect(() => {
     if (anchor) {
       const { top, left } = anchor
-      // if (!timerOn && !(top || left)) {
-      //   startAnchor()
-      //   const newleft = svgRef.current?.getBoundingClientRect().left
-      //   const newtop = svgRef.current?.getBoundingClientRect().top
-      //   if (top !== newtop || left !== newleft) {
-      //     toggleTimer()
-      //   }
-      // }
+
 
       // knotPart is not formed yet, so max knotradius need knottemplate values from props
       const maxKnotRadius = getMaxRadius(
