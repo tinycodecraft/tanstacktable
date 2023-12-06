@@ -134,7 +134,7 @@ export const ClockSlider = (props: IRoundClockProps) => {
   }
 
   const refreshKnot = (itClock: ClockPart, itKnots: KnotPart, knot: IKnotInstance, newAngleDeg: number, isdisabled?: boolean): void => {
-    if (!isdisabled && itClock !== null && knotPart !== null && knot !== null && !knot.disabled) {
+    if (!isdisabled && itClock !== null && itKnots !== null && knot !== null && !knot.disabled) {
       newAngleDeg = getSteppedAngle(newAngleDeg, itClock.stepAngle, itClock.angleStart, itClock.angleEnd)
       if (itClock.isClosed && mod(newAngleDeg, 360) === mod(itClock.angleEnd, 360)) {
         newAngleDeg = itClock.angleStart
@@ -149,7 +149,7 @@ export const ClockSlider = (props: IRoundClockProps) => {
 
       if (handleOverlap) {
         // eslint-disable-next-line prefer-const
-        let [length, prevAngle, nextAngle] = knotPart.getAdjacentKnotInfo(knot.index, [itClock.angleStart, itClock.angleEnd], itClock.isClosed)
+        let [length, prevAngle, nextAngle] = itKnots.getAdjacentKnotInfo(knot.index, [itClock.angleStart, itClock.angleEnd], itClock.isClosed)
 
         if (length === 2 && prevAngle === nextAngle) {
           const splitPointDeg = prevAngle
