@@ -19,7 +19,7 @@ export const useKnotStore = create<KnotState>((set, get) => ({
         if (draft.knots.length < draft.count) {
           draft.knots.push(payload)
         } else {
-          draft.knots.slice()
+          draft.knots.splice(0,1)
           draft.knots.push(payload)
         }
         isOkay && isOkay(true)
