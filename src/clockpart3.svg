@@ -24,14 +24,14 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="px"
      inkscape:zoom="2.6374999"
-     inkscape:cx="9.6682466"
-     inkscape:cy="-215.92417"
+     inkscape:cx="9.6682468"
+     inkscape:cy="-215.92418"
      inkscape:window-width="1920"
      inkscape:window-height="1017"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="layer2"
      showgrid="false" />
   <defs
      id="defs1">
@@ -57,7 +57,10 @@
      id="layer1">
     <g
        id="g23"
-       transform="matrix(1,0,0,1.2442573,0,61.316053)">
+       transform="matrix(1,0,0,0.6894929,0,-80.169457)"
+       inkscape:export-filename="tmp3.svg"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96">
       <g
          id="path22">
         <path
@@ -89,7 +92,8 @@
      id="layer2"
      inkscape:label="Layer 2">
     <g
-       id="path7">
+       id="path7"
+       transform="translate(-0.07543947,-64.273691)">
       <path
          style="color:#000000;fill:#000000;-inkscape-stroke:none"
          d="M 14.516474,-90.640221 A 14.516474,14.516473 0 0 1 0,-76.123748 14.516474,14.516473 0 0 1 -14.516474,-90.640221 14.516474,14.516473 0 0 1 0,-105.15669 14.516474,14.516473 0 0 1 14.516474,-90.640221 Z"

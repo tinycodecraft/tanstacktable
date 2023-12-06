@@ -3,16 +3,41 @@
 
 <svg
    width="63.0625"
-   height="240.81772"
-   viewBox="0 0 63.0625 240.81772"
+   height="176.54402"
+   viewBox="0 0 63.0625 176.54402"
    version="1.1"
    id="svg1"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
+   sodipodi:docname="clockpart3.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#cccccc"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="1"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="px"
+     inkscape:zoom="2.6374999"
+     inkscape:cx="9.6682468"
+     inkscape:cy="-215.92418"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer2"
+     showgrid="false" />
   <defs
      id="defs1">
     <linearGradient
-       id="swatch2">
+       id="swatch2"
+       inkscape:swatch="solid">
       <stop
          style="stop-color:#000000;stop-opacity:1;"
          offset="0"
@@ -20,11 +45,16 @@
     </linearGradient>
   </defs>
   <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
      id="layer1"
      transform="translate(31.53125,316.45834)">
     <g
        id="g23"
-       transform="matrix(1,0,0,1.2442573,0,61.316053)">
+       transform="matrix(1,0,0,0.6894929,0,-80.169457)"
+       inkscape:export-filename="tmp3.svg"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96">
       <g
          id="path22">
         <path
@@ -34,7 +64,8 @@
         <path
            style="color:#000000;fill:#da1fe0;stroke-linecap:round;-inkscape-stroke:none"
            d="m -5.5,-254.92773 c -2.209139,0 -3.7821169,2.29841 -4,4 -0.713134,5.56933 9.54157091,9.36194 9.5,14.96058 -0.0406238,5.47109 -9.6132679,9.05922 -9.5,14.52965 0.1065786,5.14736 9.26481365,8.28036 9.5,13.42496 0.27086685,5.9251 -9.0384697,10.1478 -9.5,16.06528 -0.63318,8.11828 8.70805141,15.06685 9.50659988,23.1757 0.40932215,4.15646 -0.62279842,8.45668 -2.48706888,12.34763 -1.5469236,3.2286 -7.244376,5.25703 -7.019531,8.71201 0.1945628,2.98967 6.1420269,4.07878 7.019531,6.98828 1.1729054,3.88894 -5.22867,11.75684 -3.019531,11.75684 2.209139,0 4,-1.79086 4,-4 v -117.96093 c 0,-2.20914 -1.790861,-4 -4,-4 z"
-           id="path27" />
+           id="path27"
+           sodipodi:nodetypes="saaaaaaaaassss" />
       </g>
       <g
          id="path23">
@@ -45,15 +76,19 @@
         <path
            style="color:#000000;fill:#421fe0;stroke-linecap:round;-inkscape-stroke:none"
            d="m 5.5,-255.03711 c -2.209139,0 -4,1.79086 -4,4 v 118.17969 c 0,2.20914 1.790861,4 4,4 2.209139,0 -4.2346103,-8.02419 -3,-11.97231 0.8922079,-2.85316 6.7617934,-3.8645 7,-6.80015 0.2854327,-3.51766 -5.4468499,-5.6581 -7,-8.95483 -1.81384993,-3.85009 -2.89015198,-8.08238 -2.49340012,-12.18685 0.78381175,-8.10867 10.12857912,-15.05863 9.49340012,-23.1757 -0.4630506,-5.91741 -9.76443278,-10.13999 -9.5,-16.06528 0.23030699,-5.16061 9.4036931,-8.3163 9.5,-13.47965 0.1017364,-5.45444 -9.44423285,-9.02009 -9.5,-14.47496 -0.0575683,-5.63105 10.227529,-9.46916 9.5,-15.06996 -0.2209984,-1.70133 -1.790861,-4 -4,-4 z"
-           id="path29" />
+           id="path29"
+           sodipodi:nodetypes="ssssaaaaaaaaas" />
       </g>
     </g>
   </g>
   <g
+     inkscape:groupmode="layer"
      id="layer2"
+     inkscape:label="Layer 2"
      transform="translate(31.53125,316.45834)">
     <g
-       id="path7">
+       id="path7"
+       transform="translate(-0.07543947,-64.273691)">
       <path
          style="color:#000000;fill:#000000;-inkscape-stroke:none"
          d="M 14.516474,-90.640221 A 14.516474,14.516473 0 0 1 0,-76.123748 14.516474,14.516473 0 0 1 -14.516474,-90.640221 14.516474,14.516473 0 0 1 0,-105.15669 14.516474,14.516473 0 0 1 14.516474,-90.640221 Z"
