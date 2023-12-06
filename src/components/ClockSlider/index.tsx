@@ -37,8 +37,10 @@ export const ClockSlider = (props: IRoundClockProps) => {
       const { top, left} =svgRef.current.getBoundingClientRect()
       if(anchor.top!==top || anchor.left !==left)
       {
+        
         setAnchor(svgRef.current.getBoundingClientRect())
       }
+      console.log(`slider position changed!`);
       
     }
   })
