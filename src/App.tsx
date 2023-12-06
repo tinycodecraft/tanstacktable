@@ -11,7 +11,7 @@ import { ClockSlider } from './components/ClockSlider'
 // import { CharacterMoreTable } from "./components/CharacterMoreTable";
 
 function App() {
-  const [knots, setKnots] = useState<IKnotProps[]>([{ value: 0 }])
+  const [knots, setKnots] = useState<IKnotProps[]>([{ value: 0 },{value: 3}])
   useEffect(()=> {
     console.log(`parent level , the knots changed...`);
   },[knots])
@@ -85,6 +85,7 @@ function App() {
               longerTickValuesOnly={true}
               ticksDistanceToPanel={3}
               ticksColor={'#efefef'}
+              knotsOverlap={true}
 
             />
           </Tabs.Panel>
