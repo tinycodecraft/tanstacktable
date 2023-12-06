@@ -34,14 +34,11 @@ export const ClockSlider = (props: IRoundClockProps) => {
 
   useMutationObserver(svgRef, () => {
     if (svgRef.current) {
-      const { top, left} =svgRef.current.getBoundingClientRect()
-      if(anchor.top!==top || anchor.left !==left)
-      {
-        
+      const { top, left } = svgRef.current.getBoundingClientRect()
+      if (anchor.top !== top || anchor.left !== left) {
         setAnchor(svgRef.current.getBoundingClientRect())
       }
-      console.log(`slider position changed!`);
-      
+      console.log(`slider position changed!`)
     }
   })
 
@@ -277,8 +274,10 @@ export const ClockSlider = (props: IRoundClockProps) => {
           />
           {center && (
             <g transform={`rotate(${knotAngle},${center[0]},${center[1]})`}>
-              <g transform={`scale(0.5,0.5) translate(${center[0]},20)`}>
-                <ClockHandleSVG />
+              <g transform={`translate(0,-${center[0]-25})`}>
+                <svg viewBox='0 0 250 100' height={500}>
+                  <ClockHandleSVG />
+                </svg>
               </g>
             </g>
           )}

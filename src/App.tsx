@@ -11,7 +11,7 @@ import { ClockSlider } from './components/ClockSlider'
 // import { CharacterMoreTable } from "./components/CharacterMoreTable";
 
 function App() {
-  const [knots, setKnots] = useState<IKnotProps[]>([{ value: 0 },{value: 3},{value: 6}])
+  const [knots, setKnots] = useState<IKnotProps[]>([{ value: 0 }])
   useEffect(()=> {
     console.log(`parent level , the knots changed...`);
   },[knots])
