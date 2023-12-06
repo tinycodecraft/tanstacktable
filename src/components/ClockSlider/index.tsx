@@ -1,10 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { IAnchorProps, IData, IKnotInstance, IRopeProps, IRoundClockProps, ITicksProps } from 'src/config/types'
 import { ClockPart } from './model/ClockPart'
 import { KnotPart } from './model/KnotPart'
 import { Vector2, mod } from 'mz-math'
 import { RNDCLK_DF_KNOT_BORDER, RNDCLK_DF_KNOT_RADIUS, RNDCLK_DF_MAX, RNDCLK_DF_MIN, OUTLINENONE_CSS } from 'src/config/constants'
-import { numberOr, valueOr } from 'src/config/methods'
+import { numberOr, useMutationObserver, valueOr } from 'src/config/methods'
 import { checkAngleInArc, createStrokeFromKnots, getClosestEdge, getKnotsProps, getMaxRadius, getSteppedAngle } from 'src/config/geometries'
 import { ClockFace } from './ClockFace'
 import { TickMarks } from './TickMarks'
@@ -24,25 +24,36 @@ export const ClockSlider = (props: IRoundClockProps) => {
   const prevAngleDegRef = useRef<number | null>(null)
 
   const [anchor, setAnchor] = useState<IAnchorProps>({ left: 0, top: 0 })
-  const [timerOn, toggleTimer] = useToggle()
-  const { start: startAnchor, clear: clearAnchor } = useTimeout(() => {
+  // const [timerOn, toggleTimer] = useToggle()
+  // const { start: startAnchor, clear: clearAnchor } = useTimeout(() => {
+  //   if (svgRef.current) {
+  //     setAnchor(svgRef.current?.getBoundingClientRect())
+  //     clearAnchor()
+  //   }
+  // }, 1000)
+
+  useMutationObserver(svgRef, () => {
     if (svgRef.current) {
-      setAnchor(svgRef.current?.getBoundingClientRect())
-      clearAnchor()
+      const { top, left} =svgRef.current.getBoundingClientRect()
+      if(anchor.top!==top || anchor.left !==left)
+      {
+        setAnchor(svgRef.current.getBoundingClientRect())
+      }
+      
     }
-  }, 1000)
+  })
 
   useEffect(() => {
     if (anchor) {
       const { top, left } = anchor
-      if (!timerOn && !(top || left)) {
-        startAnchor()
-        const newleft = svgRef.current?.getBoundingClientRect().left
-        const newtop = svgRef.current?.getBoundingClientRect().top
-        if (top !== newtop || left !== newleft) {
-          toggleTimer()
-        }
-      }
+      // if (!timerOn && !(top || left)) {
+      //   startAnchor()
+      //   const newleft = svgRef.current?.getBoundingClientRect().left
+      //   const newtop = svgRef.current?.getBoundingClientRect().top
+      //   if (top !== newtop || left !== newleft) {
+      //     toggleTimer()
+      //   }
+      // }
 
       // knotPart is not formed yet, so max knotradius need knottemplate values from props
       const maxKnotRadius = getMaxRadius(
@@ -73,11 +84,10 @@ export const ClockSlider = (props: IRoundClockProps) => {
       )
       setCenter([myclockPart.core.cx, myclockPart.core.cy])
       setClockPart(myclockPart)
-      
 
       const myknotPart = new KnotPart(myclockPart, props.knots || [], props)
       setKnotPart(myknotPart)
-      setKnotAngle(myknotPart.knots[0].angleDeg-(props.clockAngleShift ?? 0))
+      setKnotAngle(myknotPart.knots[0].angleDeg - (props.clockAngleShift ?? 0))
     }
   }, [
     anchor,
@@ -265,10 +275,9 @@ export const ClockSlider = (props: IRoundClockProps) => {
           />
           {center && (
             <g transform={`rotate(${knotAngle},${center[0]},${center[1]})`}>
-            <g transform={`scale(0.5,0.5) translate(${center[0]},20)`}>
-              <ClockHandleSVG  />              
-            </g>
-
+              <g transform={`scale(0.5,0.5) translate(${center[0]},20)`}>
+                <ClockHandleSVG />
+              </g>
             </g>
           )}
 

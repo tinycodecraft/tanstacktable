@@ -7,10 +7,30 @@ import { FilterFn, SortingFn, sortingFns } from '@tanstack/react-table'
 import { compareItems, rankItem, rankings } from '@tanstack/match-sorter-utils'
 import dayjs from 'dayjs'
 import { isNumber } from 'mz-math'
+import { useEffect } from 'react'
 
 const clsxm = (...classes: ClassValue[]) => twMerge(clsx(...classes))
 
 export const FETCHSIZE = 20
+
+const useMutationObserver = (
+  ref: React.MutableRefObject<undefined>,
+  callback: () => void,
+  options = {
+    attributes: true,
+    characterData: true,
+    childList: true,
+    subtree: true,
+  },
+) => {
+  useEffect(() => {
+    if (ref.current) {
+      const observer = new MutationObserver(callback)
+      observer.observe(ref.current, options)
+      return () => observer.disconnect()
+    }
+  }, [callback, options])
+}
 
 const daybiggerFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
   if (!value) return true
@@ -137,4 +157,4 @@ const numberOr = (value: string | number | undefined | null, def = 0): number =>
   return isNumber(value) ? Number(value) : def
 }
 
-export { numberOr, noEmptyOr, range, newPerson, valueOr, value3Or, makeData, clsxm, fuzzyFilter, fuzzySort, containsFilter, daybiggerFilter }
+export { useMutationObserver,numberOr, noEmptyOr, range, newPerson, valueOr, value3Or, makeData, clsxm, fuzzyFilter, fuzzySort, containsFilter, daybiggerFilter }
