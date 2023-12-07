@@ -66,13 +66,13 @@ function App() {
               min={0}
               max={12}
               step={0.2}
-              ropeBgColor={'#e23d31d2'}
-              pathBgColor={'#26252b7b'}
+              ropeBgColor={'#fff'}
+              pathBgColor={'#000'}
               pathBorder={3}
-              pathBorderColor={'#5ad13579'}
+              pathBorderColor={'#000'}
               knotBgColorHover={'#e23d31d2'}
               knotBorder={10}
-              knotBorderColor={'#3151e2d2'}
+              knotBorderColor={'#4e105c'}
               knotBgColor={'#e2df31d2'}
               knotBgColorSelected={'#b8b527d2'}
               enableTicks={true}
