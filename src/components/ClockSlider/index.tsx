@@ -40,11 +40,11 @@ export const ClockSlider = (props: IRoundClockProps) => {
       margin-top: -50px;
       stroke-width: 3;
       fill: none;
-      stroke: #7fbb3a;
+      stroke: #2a3fb9;
       cursor: pointer;
     }
     & .centertext.animated {
-      stroke: #7fbb3a;
+      stroke: #2a3fb9;
     }
     & .centertext.animated path {
       stroke-dasharray: 400;
@@ -321,15 +321,19 @@ export const ClockSlider = (props: IRoundClockProps) => {
           )}
           {center && (
             <TextSvg viewBox='0 0 106 106'>
-              <g transform={`scale(0.2,0.2) translate(${center[0] + 47},${center[1] + 48})`}>
-                <svg viewBox='0 0 106 106' className='centertext'>
+              <g transform={`translate(0,43)`}>
+                <svg viewBox='0 0 106 106' className='centertext' height={20}>
                   <path d='M 53 53 m -50, 0 a 50,50 0 1,0 100,0 a 50,50 0 1,0 -100,0' />
+                  
                 </svg>
 
-                <svg viewBox='0 0 106 106' className='centertext animated'>
+                <svg viewBox='0 0 106 106' className='centertext animated' height={20}>
                   <path d='M 53 53 m -50, 0 a 50,50 0 1,0 100,0 a 50,50 0 1,0 -100,0' />
                 </svg>
-                <text x='50%' y='50%' dominantBaseline={`middle`} textAnchor='middle' fontSize={`2em`} stroke='#75d436' strokeWidth={`2`}>{cycles}</text>
+                <svg viewBox='0 0 106 106' height={21}>
+                <text x='50%' y='50%' dominantBaseline={`middle`} textAnchor='middle' fontSize={`2em`} stroke='#d4c436' strokeWidth={`2`} fill='#75d436'>{cycles}</text>
+                </svg>
+                
               </g>
             </TextSvg>
           )}
