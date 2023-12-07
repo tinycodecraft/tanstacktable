@@ -321,7 +321,7 @@ export const ClockSlider = (props: IRoundClockProps) => {
           )}
           {center && (
             <TextSvg viewBox='0 0 106 106'>
-              <g transform={`scale(0.2,0.2) translate(${center[0] + 48},${center[1] + 48})`}>
+              <g transform={`scale(0.2,0.2) translate(${center[0] + 47},${center[1] + 48})`}>
                 <svg viewBox='0 0 106 106' className='centertext'>
                   <path d='M 53 53 m -50, 0 a 50,50 0 1,0 100,0 a 50,50 0 1,0 -100,0' />
                 </svg>
