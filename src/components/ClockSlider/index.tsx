@@ -23,9 +23,7 @@ export const ClockSlider = (props: IRoundClockProps) => {
   const { animateOnClick, animationDuration, pathBgColor, pathBorderColor } = props
   const [svgRef, svgRect] = useResizeObserver()
   const prevAngleDegRef = useRef<number | null>(null)
-  const { push,peek,isInbound, noMove,getNewIndex} = useKnotStore()
-  
-
+  const { push, peek, isInbound, noMove, getNewIndex } = useKnotStore()
 
   const [anchor, setAnchor] = useState<IAnchorProps>({ left: 0, top: 0 })
 
@@ -44,7 +42,6 @@ export const ClockSlider = (props: IRoundClockProps) => {
   useEffect(() => {
     if (anchor) {
       const { top, left } = anchor
-
 
       // knotPart is not formed yet, so max knotradius need knottemplate values from props
       const maxKnotRadius = getMaxRadius(
@@ -126,27 +123,20 @@ export const ClockSlider = (props: IRoundClockProps) => {
     if (!isdisabled && itClock !== null && itKnots !== null && knot !== null && !knot.disabled) {
       newAngleDeg = getSteppedAngle(newAngleDeg, itClock.stepAngle, itClock.angleStart, itClock.angleEnd)
       const tmpKnotIndex = getNewIndex()
-      const tmpKnot ={angleDeg: newAngleDeg, index: tmpKnotIndex }
-      if(getNewIndex() ==0)
-      {        
+      const tmpKnot = { angleDeg: newAngleDeg, index: tmpKnotIndex }
+      if (getNewIndex() == 0) {
         push(tmpKnot)
         console.log(`zero index`)
-      }
-      else {
+      } else {
         const backing = isInbound(tmpKnot)
         const NotMoved = noMove(tmpKnot)
-        
-        if(NotMoved)
-        {
-          console.log(`the clock is not moving!`)
-        }
-        else{
-          console.log(`the clock is backing : ${backing}`)          
+
+        if (!NotMoved) {
+          console.log(`the clock is backing : ${backing}`)
           push(tmpKnot)
           console.log(`the new knot move to ${peek(tmpKnotIndex)?.angleDeg} with index ${tmpKnotIndex}`)
         }
       }
-
 
       if (itClock.isClosed && mod(newAngleDeg, 360) === mod(itClock.angleEnd, 360)) {
         newAngleDeg = itClock.angleStart
@@ -230,7 +220,6 @@ export const ClockSlider = (props: IRoundClockProps) => {
     if (itKnots !== null && itClock !== null) {
       const newKnots = itKnots.getNewKnots(knot.index, newAngleDeg)
       if (newKnots !== null) {
-        
         setKnotPart(Object.assign(Object.create(itKnots), { knots: newKnots, stroke: createStrokeFromKnots(itClock.core, newKnots) }))
 
         setKnotAngle(newKnots[0].angleDeg - (props.clockAngleShift ?? 0))
@@ -289,7 +278,7 @@ export const ClockSlider = (props: IRoundClockProps) => {
           />
           {center && (
             <g transform={`rotate(${knotAngle},${center[0]},${center[1]})`}>
-              <g transform={`translate(0,-${center[0]-25})`}>
+              <g transform={`translate(0,-${center[0] - 25})`}>
                 <svg viewBox='0 0 250 100' height={500}>
                   <ClockHandleSVG />
                 </svg>
