@@ -11,7 +11,7 @@ import { TickMarks } from './TickMarks'
 import { RopeLine } from './RopeLine'
 import { KnotDot } from './KnotDot'
 import { useResizeObserver } from '@mantine/hooks'
-import { ReactComponent as ClockHandleSVG } from './ClockHandle.svg'
+import { ReactComponent as ClockHandleSVG } from './ClockBallNeedle.svg'
 import { useKnotStore } from './model/useKnotStore'
 import styled from '@emotion/styled'
 
@@ -313,7 +313,7 @@ export const ClockSlider = (props: IRoundClockProps) => {
           {center && (
             <g transform={`rotate(${knotAngle},${center[0]},${center[1]})`}>
               <g transform={`translate(0,-${center[0] - 25})`}>
-                <svg viewBox='0 0 250 100' height={500}>
+                <svg viewBox='0 0 250 120' height={500}>
                   <ClockHandleSVG />
                 </svg>
               </g>
