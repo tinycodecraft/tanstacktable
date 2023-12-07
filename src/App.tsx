@@ -85,6 +85,7 @@ function App() {
               longerTickValuesOnly={true}
               ticksDistanceToPanel={3}
               ticksColor={'#efefef'}
+              round={2}
               
 
             />
