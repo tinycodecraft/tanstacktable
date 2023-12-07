@@ -23,7 +23,7 @@ export const ClockSlider = (props: IRoundClockProps) => {
   const { animateOnClick, animationDuration, pathBgColor, pathBorderColor } = props
   const [svgRef, svgRect] = useResizeObserver()
   const prevAngleDegRef = useRef<number | null>(null)
-  const { push, peek, isInbound, noMove, getNewIndex } = useKnotStore()
+  const { push, peek, noMove, getNewIndex, setShiftOnce, cycles } = useKnotStore()
 
   const [anchor, setAnchor] = useState<IAnchorProps>({ left: 0, top: 0 })
 
@@ -32,6 +32,7 @@ export const ClockSlider = (props: IRoundClockProps) => {
   useMutationObserver(svgRef, () => {
     if (svgRef.current) {
       const { top, left } = svgRef.current.getBoundingClientRect()
+      setShiftOnce(360 - (props.clockAngleShift ?? 0))
       if (anchor.top !== top || anchor.left !== left) {
         setAnchor(svgRef.current.getBoundingClientRect())
       }
@@ -122,19 +123,19 @@ export const ClockSlider = (props: IRoundClockProps) => {
   const refreshKnot = (itClock: ClockPart, itKnots: KnotPart, knot: IKnotInstance, newAngleDeg: number, isdisabled?: boolean): void => {
     if (!isdisabled && itClock !== null && itKnots !== null && knot !== null && !knot.disabled) {
       newAngleDeg = getSteppedAngle(newAngleDeg, itClock.stepAngle, itClock.angleStart, itClock.angleEnd)
+      // try to get cycle
       const tmpKnotIndex = getNewIndex()
       const tmpKnot = { angleDeg: newAngleDeg, index: tmpKnotIndex }
       if (getNewIndex() == 0) {
         push(tmpKnot)
         console.log(`zero index`)
       } else {
-        const backing = isInbound(tmpKnot)
         const NotMoved = noMove(tmpKnot)
 
         if (!NotMoved) {
-          console.log(`the clock is backing : ${backing}`)
           push(tmpKnot)
-          console.log(`the new knot move to ${peek(tmpKnotIndex)?.angleDeg} with index ${tmpKnotIndex}`)
+          
+          console.log(`the new knot move to ${peek(tmpKnotIndex)?.angleDeg} with index ${tmpKnotIndex} with cycles ${cycles}`)
         }
       }
 

@@ -1,29 +1,57 @@
 import create from 'zustand'
 import { Draft, produce } from 'immer'
 import { KnotState } from 'src/config/types'
+import { mod } from 'mz-math'
 
 export const useKnotStore = create<KnotState>((set, get) => ({
   knots: [],
   count: 3,
-  push: (payload, isOkay) =>
+  angleShift: 0,
+  cycles: 0,
+
+  setShiftOnce: (shift) => {
     set(
-      produce((draft: Draft<Pick<KnotState, 'knots' | 'count'>>) => {
+      produce((draft: Draft<Pick<KnotState, 'angleShift' | 'cycles'>>) => {
+        draft.angleShift = shift
+        draft.cycles = 0
+      }),
+    )
+  },
+  push: (payload) =>
+    set(
+      produce((draft: Draft<Pick<KnotState, 'knots' | 'count' | 'cycles'>>) => {
         if (draft.knots.length > 0) {
           // try to skip the duplicate
           if (draft.knots[draft.knots.length - 1].angleDeg == payload.angleDeg) {
-            isOkay && isOkay(false)
+            
             return
           }
         }
+        const anticlockwise = get().isInbound(payload)
 
         if (draft.knots.length < draft.count) {
-          
           draft.knots.push(payload)
         } else {
           draft.knots.splice(0, 1)
-          draft.knots.push(payload)          
+          draft.knots.push(payload)
         }
-        isOkay && isOkay(true)
+        if (draft.knots.length == draft.count) {
+          const prevangle = mod(draft.knots[0].angleDeg + get().angleShift, 360)
+          const lastangle = mod(draft.knots[1].angleDeg + get().angleShift, 360)
+          const payangle = mod(draft.knots[2].angleDeg + get().angleShift, 360)
+          console.log(`load : ${payangle} last: ${lastangle} prev: ${prevangle} when ${anticlockwise ? 'anticlockwise' : 'clockwise'}`)
+
+          if (!anticlockwise && prevangle > lastangle && payangle > lastangle && payangle - prevangle < -150) {
+            console.log(`addition!!`)
+            
+
+          }
+          if (anticlockwise && payangle - prevangle > 150 && payangle > lastangle && prevangle > lastangle) {
+            console.log(`substraction!!`)
+            
+          }
+        }
+        
       }),
     ),
   peek: (payload) => {
@@ -37,20 +65,15 @@ export const useKnotStore = create<KnotState>((set, get) => ({
     const itknots = get().knots
     if (itknots.length > 1) {
       const lastknot = itknots[itknots.length - 1]
-      const prevknot = itknots[itknots.length-2]
-      const angleInDifflast =  payload.angleDeg- lastknot.angleDeg
-      const angleInDiffprev =  lastknot.angleDeg- prevknot.angleDeg
+      const prevknot = itknots[itknots.length - 2]
+      const angleInDifflast = payload.angleDeg - lastknot.angleDeg
+      const angleInDiffprev = lastknot.angleDeg - prevknot.angleDeg
 
-      console.log(`load : ${payload.angleDeg} last: ${lastknot.angleDeg} prev: ${prevknot.angleDeg}`)
-
-      if(angleInDifflast< 0 && angleInDifflast+360 < 150)
-      {
-        
+      if (angleInDifflast < 0 && angleInDifflast + 360 < 150) {
         return false
       }
-      if( angleInDifflast > 150 && angleInDiffprev < 0)
-      {
-        return true;
+      if (angleInDifflast > 150 && angleInDiffprev < 0) {
+        return true
       }
 
       return lastknot.angleDeg > payload.angleDeg

@@ -422,11 +422,15 @@ interface IAngleInfo {
 interface KnotState {
   knots: IAngleInfo[]
   count: number
-  push: (newknot: IAngleInfo,isOkay?: (result:boolean)=> void) => void
+  angleShift: number
+  cycles: number
+  push: (newknot: IAngleInfo) => void
   peek: (index: number) => IAngleInfo|null
   isInbound: (newknot: IAngleInfo) => boolean
   noMove: (newknot: IAngleInfo) => boolean
   getNewIndex: () => number
+  setShiftOnce: (shift:number) => void  
+
 }
 
 export interface IKnotInstance extends Omit<Required<IKnotProps>, 'value|ariaLabel'>,IAngleInfo {
