@@ -13,6 +13,7 @@ import { KnotDot } from './KnotDot'
 import { useResizeObserver } from '@mantine/hooks'
 import { ReactComponent as ClockHandleSVG } from './ClockHandle.svg'
 import { useKnotStore } from './model/useKnotStore'
+import styled from '@emotion/styled'
 
 export const ClockSlider = (props: IRoundClockProps) => {
   const [clockPart, setClockPart] = useState<ClockPart | null>(null)
@@ -26,6 +27,37 @@ export const ClockSlider = (props: IRoundClockProps) => {
   const { push, peek, noMove, getNewIndex, setShiftOnce, cycles } = useKnotStore()
 
   const [anchor, setAnchor] = useState<IAnchorProps>({ left: 0, top: 0 })
+
+  const TextSvg = styled.svg`
+    & .centertext {
+      width: 100px;
+      height: 100px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      margin-left: -50px;
+      margin-top: -50px;
+      stroke-width: 3;
+      fill: none;
+      stroke: #eee;
+      cursor: pointer;
+    }
+    & .centertext.animated {
+      stroke: #888;
+    }
+    & .centertext.animated path {
+      stroke-dasharray: 400;
+      stroke-dashoffset: 400;
+      transition: 1.2s ease-in;
+      transform-origin: center center;
+    }
+
+    & .centertext.animated path:hover {
+      transition: 1.3s ease-out;
+      transform: rotate(960deg);
+      stroke-dashoffset: 0;
+    }
+  `
 
   // useMutationObserver is more stable way to get anchor
 
@@ -134,7 +166,7 @@ export const ClockSlider = (props: IRoundClockProps) => {
 
         if (!NotMoved) {
           push(tmpKnot)
-          
+
           console.log(`the new knot move to ${peek(tmpKnotIndex)?.angleDeg} with index ${tmpKnotIndex} with cycles ${cycles}`)
         }
       }
@@ -285,6 +317,20 @@ export const ClockSlider = (props: IRoundClockProps) => {
                 </svg>
               </g>
             </g>
+          )}
+          {center && (
+            <TextSvg viewBox='0 0 106 106'>
+              <g transform={`scale(0.2,0.2) translate(${center[0] + 48},${center[1] + 48})`}>
+                <svg viewBox='0 0 106 106' className='centertext'>
+                  <path d='M 53 53 m -50, 0 a 50,50 0 1,0 100,0 a 50,50 0 1,0 -100,0' />
+                </svg>
+
+                <svg viewBox='0 0 106 106' className='centertext animated'>
+                  <path d='M 53 53 m -50, 0 a 50,50 0 1,0 100,0 a 50,50 0 1,0 -100,0' />
+                </svg>
+                <text>dlkfj</text>
+              </g>
+            </TextSvg>
           )}
 
           {knotPart.knots.map((knot) => {
