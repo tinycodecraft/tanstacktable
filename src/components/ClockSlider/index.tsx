@@ -331,7 +331,7 @@ export const ClockSlider = (props: IRoundClockProps) => {
                   <path d='M 53 53 m -50, 0 a 50,50 0 1,0 100,0 a 50,50 0 1,0 -100,0' />
                 </svg>
                 <svg viewBox='0 0 106 106' height={21}>
-                <text x='50%' y='50%' dominantBaseline={`middle`} textAnchor='middle' fontSize={`2em`} stroke='#d4c436' strokeWidth={`2`} fill='#75d436'>{cycles}</text>
+                <text x='50%' y='50%' dominantBaseline={`middle`} textAnchor='middle' fontSize={`2em`} stroke='#f7f5e7' strokeWidth={`2`} fill='#75d436'>{cycles}</text>
                 </svg>
                 
               </g>
