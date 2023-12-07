@@ -7,19 +7,19 @@ export const useKnotStore = create<KnotState>((set, get) => ({
   knots: [],
   count: 3,
   angleShift: 0,
-  cycles: 0,
+  
 
   setShiftOnce: (shift) => {
     set(
-      produce((draft: Draft<Pick<KnotState, 'angleShift' | 'cycles'>>) => {
+      produce((draft: Draft<Pick<KnotState, 'angleShift' >>) => {
         draft.angleShift = shift
-        draft.cycles = 0
+        
       }),
     )
   },
-  push: (payload) =>
+  push: (payload,setCycle: React.Dispatch<React.SetStateAction<number>>) =>
     set(
-      produce((draft: Draft<Pick<KnotState, 'knots' | 'count' | 'cycles'>>) => {
+      produce((draft: Draft<Pick<KnotState, 'knots' | 'count' >>) => {
         if (draft.knots.length > 0) {
           // try to skip the duplicate
           if (draft.knots[draft.knots.length - 1].angleDeg == payload.angleDeg) {
@@ -43,12 +43,13 @@ export const useKnotStore = create<KnotState>((set, get) => ({
 
           if (!anticlockwise && prevangle > lastangle && payangle > lastangle && payangle - prevangle < -150) {
             console.log(`addition!!`)
+            setCycle((cycle) => cycle+1)
             
 
           }
           if (anticlockwise && payangle - prevangle > 150 && payangle > lastangle && prevangle > lastangle) {
             console.log(`substraction!!`)
-            
+            setCycle((cycle) => cycle-1)
           }
         }
         

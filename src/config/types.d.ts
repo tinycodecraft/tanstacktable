@@ -1,5 +1,6 @@
 import { FilterFn } from '@tanstack/react-table'
 import { RankingInfo } from '@tanstack/match-sorter-utils'
+import React from 'react'
 
 declare module '@tanstack/table-core' {
   interface FilterFns {
@@ -423,8 +424,8 @@ interface KnotState {
   knots: IAngleInfo[]
   count: number
   angleShift: number
-  cycles: number
-  push: (newknot: IAngleInfo) => void
+  
+  push: (newknot: IAngleInfo, setCycle: React.Dispatch<React.SetStateAction<number>>) => void
   peek: (index: number) => IAngleInfo|null
   isInbound: (newknot: IAngleInfo) => boolean
   noMove: (newknot: IAngleInfo) => boolean

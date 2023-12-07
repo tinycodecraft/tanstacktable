@@ -24,7 +24,8 @@ export const ClockSlider = (props: IRoundClockProps) => {
   const { animateOnClick, animationDuration, pathBgColor, pathBorderColor } = props
   const [svgRef, svgRect] = useResizeObserver()
   const prevAngleDegRef = useRef<number | null>(null)
-  const { push, peek, noMove, getNewIndex, setShiftOnce, cycles } = useKnotStore()
+  const [ cycles, setCycles] = useState<number>(0)
+  const { push, peek, noMove, getNewIndex, setShiftOnce } = useKnotStore()
 
   const [anchor, setAnchor] = useState<IAnchorProps>({ left: 0, top: 0 })
 
@@ -39,11 +40,11 @@ export const ClockSlider = (props: IRoundClockProps) => {
       margin-top: -50px;
       stroke-width: 3;
       fill: none;
-      stroke: #eee;
+      stroke: #7fbb3a;
       cursor: pointer;
     }
     & .centertext.animated {
-      stroke: #888;
+      stroke: #7fbb3a;
     }
     & .centertext.animated path {
       stroke-dasharray: 400;
@@ -159,15 +160,15 @@ export const ClockSlider = (props: IRoundClockProps) => {
       const tmpKnotIndex = getNewIndex()
       const tmpKnot = { angleDeg: newAngleDeg, index: tmpKnotIndex }
       if (getNewIndex() == 0) {
-        push(tmpKnot)
+        push(tmpKnot,setCycles)
         console.log(`zero index`)
       } else {
         const NotMoved = noMove(tmpKnot)
 
         if (!NotMoved) {
-          push(tmpKnot)
+          push(tmpKnot,setCycles)
 
-          console.log(`the new knot move to ${peek(tmpKnotIndex)?.angleDeg} with index ${tmpKnotIndex} with cycles ${cycles}`)
+          console.log(`the new knot move to ${peek(tmpKnotIndex)?.angleDeg} with index ${tmpKnotIndex}`)
         }
       }
 
@@ -328,7 +329,7 @@ export const ClockSlider = (props: IRoundClockProps) => {
                 <svg viewBox='0 0 106 106' className='centertext animated'>
                   <path d='M 53 53 m -50, 0 a 50,50 0 1,0 100,0 a 50,50 0 1,0 -100,0' />
                 </svg>
-                <text>dlkfj</text>
+                <text x='50%' y='50%' dominantBaseline={`middle`} textAnchor='middle' fontSize={`2em`} stroke='#75d436' strokeWidth={`2`}>{cycles}</text>
               </g>
             </TextSvg>
           )}

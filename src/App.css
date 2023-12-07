@@ -38,30 +38,3 @@
 }
 
 
-svg.centertext {
-  width: 100px;
-  height: 100px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  margin-left: -50px;
-  margin-top: -50px;
-  stroke-width: 3;
-  fill: none;
-  stroke: #eee;
-  cursor: pointer;
-}
-svg.centertext.animated {
-  stroke: #888;
-}
-svg.centertext.animated path {
-  stroke-dasharray: 400;
-  stroke-dashoffset: 400;
-  transition: 1.2s ease-in;
-  transform-origin: center center;
-}
-svg.centertext.animated:hover path {
-  transition: 1.3s ease-out;
-  transform: rotate(960deg);
-  stroke-dashoffset: 0;
-}
