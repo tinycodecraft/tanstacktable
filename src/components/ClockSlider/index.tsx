@@ -34,12 +34,13 @@ export const ClockSlider = (props: IRoundClockProps) => {
   from, 20%, to {
       stroke-dasharray: 400;
       stroke-dashoffset: 400;
-      transition: 1.3s ease-in;
+      
+      transform: rotate(20deg);
       transform-origin: center center;    
   }
 
   90% {
-    transition: 1.3s ease-out;
+    
       transform: rotate(960deg);
       stroke-dashoffset: 0;
   }
@@ -64,7 +65,7 @@ export const ClockSlider = (props: IRoundClockProps) => {
       stroke: #888;
     }
     & .centertext.animated path {
-      animation: ${cycleperiod} 1.3s ease infinite;
+      animation: ${cycleperiod} 4s ease infinite;
     }
   `
 
