@@ -90,7 +90,10 @@ export const ClockSlider = (props: IRoundClockProps) => {
       stroke: #888;
     }
     & .centertext.animated path {
-      animation: ${centerHover ? backcycleperiod : cycleperiod} ${centerHover ? '2s': '4s'} ease forwards;
+      animation: ${centerHover ? backcycleperiod : cycleperiod} ${centerHover ? '2s' : '4s'} ease forwards;
+    }
+    & .centerfill {
+      cursor: pointer;
     }
   `
 
@@ -382,7 +385,12 @@ export const ClockSlider = (props: IRoundClockProps) => {
                   >
                     {cycles}
                   </text>
+                </svg>                
+                <svg  viewBox='0 0 16 16' fill='#000000' fillOpacity={0.1} height={20} onMouseEnter={onCenterMouseOver} onMouseOut={onCenterMouseOut} onMouseOver={onCenterMouseOver} className='centerfill'>
+                  <circle cx='8' cy='8' r='8' />
                 </svg>
+
+
               </g>
             </TextSvg>
           )}
