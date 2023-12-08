@@ -14,6 +14,7 @@ import { useResizeObserver } from '@mantine/hooks'
 import { ReactComponent as ClockHandleSVG } from './ClockBallNeedle.svg'
 import { useKnotStore } from './model/useKnotStore'
 import styled from '@emotion/styled'
+import { keyframes } from '@emotion/react'
 
 export const ClockSlider = (props: IRoundClockProps) => {
   const [clockPart, setClockPart] = useState<ClockPart | null>(null)
@@ -24,10 +25,25 @@ export const ClockSlider = (props: IRoundClockProps) => {
   const { animateOnClick, animationDuration, pathBgColor, pathBorderColor } = props
   const [svgRef, svgRect] = useResizeObserver()
   const prevAngleDegRef = useRef<number | null>(null)
-  const [ cycles, setCycles] = useState<number>(0)
+  const [cycles, setCycles] = useState<number>(0)
   const { push, peek, noMove, getNewIndex, setShiftOnce } = useKnotStore()
+  const [centerHover, setCenterHover] = useState<boolean>(false)
 
   const [anchor, setAnchor] = useState<IAnchorProps>({ left: 0, top: 0 })
+  const cycleperiod = keyframes`
+  from, 20%, to {
+      stroke-dasharray: 400;
+      stroke-dashoffset: 400;
+      transition: 1.3s ease-in;
+      transform-origin: center center;    
+  }
+
+  90% {
+    transition: 1.3s ease-out;
+      transform: rotate(960deg);
+      stroke-dashoffset: 0;
+  }
+  `
 
   const TextSvg = styled.svg`
     & .centertext {
@@ -40,23 +56,15 @@ export const ClockSlider = (props: IRoundClockProps) => {
       margin-top: -50px;
       stroke-width: 3;
       fill: none;
-      stroke: #2a3fb9;
+      stroke: #eee;
       cursor: pointer;
     }
+
     & .centertext.animated {
-      stroke: #2a3fb9;
+      stroke: #888;
     }
     & .centertext.animated path {
-      stroke-dasharray: 400;
-      stroke-dashoffset: 400;
-      transition: 1.2s ease-in;
-      transform-origin: center center;
-    }
-
-    & .centertext.animated path:hover {
-      transition: 1.3s ease-out;
-      transform: rotate(960deg);
-      stroke-dashoffset: 0;
+      animation: ${cycleperiod} 1.3s ease infinite;
     }
   `
 
@@ -128,6 +136,9 @@ export const ClockSlider = (props: IRoundClockProps) => {
   ])
 
   useEffect(() => {
+    console.log(`the center hover event ${centerHover}`)
+  }, [centerHover])
+  useEffect(() => {
     const clearSelectedPointer = (evt: MouseEvent) => {
       const $target = evt.target as HTMLElement
       const $pointer = $target.closest('[data-type="pointer"]')
@@ -160,13 +171,13 @@ export const ClockSlider = (props: IRoundClockProps) => {
       const tmpKnotIndex = getNewIndex()
       const tmpKnot = { angleDeg: newAngleDeg, index: tmpKnotIndex }
       if (getNewIndex() == 0) {
-        push(tmpKnot,setCycles)
+        push(tmpKnot, setCycles)
         console.log(`zero index`)
       } else {
         const NotMoved = noMove(tmpKnot)
 
         if (!NotMoved) {
-          push(tmpKnot,setCycles)
+          push(tmpKnot, setCycles)
 
           console.log(`the new knot move to ${peek(tmpKnotIndex)?.angleDeg} with index ${tmpKnotIndex}`)
         }
@@ -267,6 +278,9 @@ export const ClockSlider = (props: IRoundClockProps) => {
     }
   }
 
+  const onCenterMouseOver = () => setCenterHover(true)
+  const onCenterMouseOut = () => setCenterHover(false)
+
   return (
     <>
       {clockPart && knotPart && (
@@ -320,20 +334,29 @@ export const ClockSlider = (props: IRoundClockProps) => {
             </g>
           )}
           {center && (
-            <TextSvg viewBox='0 0 106 106'>
+            <TextSvg viewBox='0 0 106 106' onMouseEnter={onCenterMouseOver} onMouseOut={onCenterMouseOut} onMouseOver={onCenterMouseOver}>
               <g transform={`translate(0,43)`}>
                 <svg viewBox='0 0 106 106' className='centertext' height={20}>
                   <path d='M 53 53 m -50, 0 a 50,50 0 1,0 100,0 a 50,50 0 1,0 -100,0' />
-                  
                 </svg>
 
-                <svg viewBox='0 0 106 106' className='centertext animated' height={20}>
+                <svg viewBox='0 0 106 106' className={`centertext ${centerHover ? 'animated' : ''}`} height={20}>
                   <path d='M 53 53 m -50, 0 a 50,50 0 1,0 100,0 a 50,50 0 1,0 -100,0' />
                 </svg>
                 <svg viewBox='0 0 106 106' height={21}>
-                <text x='50%' y='50%' dominantBaseline={`middle`} textAnchor='middle' fontSize={`2em`} stroke='#f7f5e7' strokeWidth={`2`} fill='#75d436'>{cycles}</text>
+                  <text
+                    x='50%'
+                    y='50%'
+                    dominantBaseline={`middle`}
+                    textAnchor='middle'
+                    fontSize={`2em`}
+                    stroke='#f7f5e7'
+                    strokeWidth={`2`}
+                    fill='#75d436'
+                  >
+                    {cycles}
+                  </text>
                 </svg>
-                
               </g>
             </TextSvg>
           )}
