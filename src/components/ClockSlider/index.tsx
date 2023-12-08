@@ -44,6 +44,11 @@ export const ClockSlider = (props: IRoundClockProps) => {
       transform: rotate(960deg);
       stroke-dashoffset: 0;
   }
+  100% {
+      
+      stroke-dashoffset: 0;
+
+  }
   `
 
   const TextSvg = styled.svg`
@@ -65,7 +70,7 @@ export const ClockSlider = (props: IRoundClockProps) => {
       stroke: #888;
     }
     & .centertext.animated path {
-      animation: ${cycleperiod} 4s ease infinite;
+      animation: ${cycleperiod} 4s ease forwards;
     }
   `
 
