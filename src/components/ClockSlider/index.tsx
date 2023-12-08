@@ -372,7 +372,7 @@ export const ClockSlider = (props: IRoundClockProps) => {
                 <svg viewBox='0 0 106 106' className={`centertext ${angleShift > 0 ? 'animated' : ''}`} height={20}>
                   <path d='M 53 53 m -50, 0 a 50,50 0 1,0 100,0 a 50,50 0 1,0 -100,0' />
                 </svg>
-                <svg viewBox='0 0 106 106' height={21}>
+                <svg viewBox='0 0 106 106' height={20}>
                   <text
                     x='50%'
                     y='50%'
@@ -385,12 +385,19 @@ export const ClockSlider = (props: IRoundClockProps) => {
                   >
                     {cycles}
                   </text>
-                </svg>                
-                <svg  viewBox='0 0 16 16' fill='#000000' fillOpacity={0.1} height={20} onMouseEnter={onCenterMouseOver} onMouseOut={onCenterMouseOut} onMouseOver={onCenterMouseOver} className='centerfill'>
-                  <circle cx='8' cy='8' r='8' />
+                  <circle
+                    cx='53'
+                    cy='50'
+                    r='45'
+                    fill='#2281ce'
+                    fillOpacity={0.1}
+                    height={20}
+                    onMouseEnter={onCenterMouseOver}
+                    onMouseOut={onCenterMouseOut}
+                    onMouseOver={onCenterMouseOver}
+                    className='centerfill'
+                  />
                 </svg>
-
-
               </g>
             </TextSvg>
           )}
