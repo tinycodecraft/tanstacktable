@@ -26,7 +26,7 @@ export const ClockSlider = (props: IRoundClockProps) => {
   const [svgRef, svgRect] = useResizeObserver()
   const prevAngleDegRef = useRef<number | null>(null)
   const [cycles, setCycles] = useState<number>(0)
-  const { push, peek, noMove, getNewIndex, setShiftOnce } = useKnotStore()
+  const { push, peek, noMove, getNewIndex, setShiftOnce,angleShift } = useKnotStore()
   const [centerHover, setCenterHover] = useState<boolean>(false)
 
   const [anchor, setAnchor] = useState<IAnchorProps>({ left: 0, top: 0 })
@@ -45,7 +45,7 @@ export const ClockSlider = (props: IRoundClockProps) => {
       stroke-dashoffset: 0;
   }
   100% {
-      
+    stroke-dasharray: 400;
       stroke-dashoffset: 0;
 
   }
@@ -346,7 +346,7 @@ export const ClockSlider = (props: IRoundClockProps) => {
                   <path d='M 53 53 m -50, 0 a 50,50 0 1,0 100,0 a 50,50 0 1,0 -100,0' />
                 </svg>
 
-                <svg viewBox='0 0 106 106' className={`centertext ${centerHover ? 'animated' : ''}`} height={20}>
+                <svg viewBox='0 0 106 106' className={`centertext ${angleShift >0 ? 'animated': '' }`} height={20}>
                   <path d='M 53 53 m -50, 0 a 50,50 0 1,0 100,0 a 50,50 0 1,0 -100,0' />
                 </svg>
                 <svg viewBox='0 0 106 106' height={21}>
